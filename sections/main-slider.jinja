@@ -4,10 +4,11 @@
          data-sm-scroll-offset="94"
          class="ss">
   <div class="container container-slider">
-    <div class="main-slider slider s-slider">
+    <div class="main-slider slider swiper">
+      <div class="swiper-wrapper">
         {% for slide in safeget(settings, "slider", []) %}
          {% set key=loop.index0 %}
-          <div class="slider-item">
+          <div class="slider-item swiper-slide">
             <div class="box-1-1 ratio21_9">
               <div class="content">
                 <a href="{% if slide.url %}{{ slide.url }}{% else %}/{% endif %}" class="d-flex flex-column justify-content-start"
@@ -56,6 +57,10 @@
             </div>
           </div>
         {% endfor %}
+      </div>
+      {% if not settings.hide_dots and (safeget(settings, "slider", []) | length > 1) %}
+        <div class="theme-swiper-pagination swiper-pagination"></div>
+      {% endif %}
     </div>
   </div>
 </section>
@@ -63,20 +68,29 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function(){
-        $('[section-id={{ sectionId }}] .main-slider').slick({
-            infinite: false,
-            autoplay: true,
-            arrows: false,
-            dots: {% if (settings.hide_dots or (safeget(settings, "slider", []) | length <= 1)) %}false{% else %}true{% endif %},
-            rtl: !(window.appDirection === 'ltr')
-        });
+        var section = document.getElementById('{{ sectionId }}');
+        var slider = section ? section.querySelector('.main-slider') : null;
 
+        if (!slider || !window.themeSwiper) {
+            return;
+        }
 
-        $('[section-id={{ sectionId }}] .main-slider').on('beforeChange', function(event, { slideCount: count }, currentSlide, nextSlide){
-            var currentImage = $('[section-id={{ sectionId }}] .slider-image-'+nextSlide);
-            if(!currentImage.attr('src')){
-                currentImage.attr('srcset',currentImage.attr('data-srcset'))
-                currentImage.attr('src',currentImage.attr('src'))
+        window.themeSwiper.init(slider, {
+            loop: false,
+            autoplay: {
+                delay: 3000,
+                disableOnInteraction: false
+            },
+            navigation: false,
+            pagination: {% if (settings.hide_dots or (safeget(settings, "slider", []) | length <= 1)) %}false{% else %}true{% endif %},
+            on: {
+                slideChangeTransitionStart: function (swiper) {
+                    var currentImage = section.querySelector('.slider-image-' + swiper.activeIndex);
+                    if (currentImage && !currentImage.getAttribute('src')) {
+                        currentImage.setAttribute('srcset', currentImage.getAttribute('data-srcset') || '');
+                        currentImage.setAttribute('src', currentImage.getAttribute('data-src') || '');
+                    }
+                }
             }
         });
     });

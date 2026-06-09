@@ -1,4 +1,4 @@
-{% set ver = '0.1.041' %}
+{% set ver = '0.1.042' %}
 <!doctype html>
 <html class="no-js" lang="{{ session.lang }}" dir="{{ session.locale.language.direction }}">
 <head>
@@ -123,8 +123,8 @@
     <link rel="stylesheet" type="text/css" href="{{ 'jquery-ui.structure.min.css' | asset_url }}"  />
     <link rel="stylesheet" type="text/css" href="{{ 'jquery-ui.theme.min.css' | asset_url }}"  />
 
-    <link rel="stylesheet" type="text/css" href="{{ 'slick.css' | asset_url }}" />
-    <link rel="stylesheet" type="text/css" href="{{ 'slick-theme.css?v=1.08' | asset_url }}" />
+    <link rel="stylesheet" type="text/css" href="{{ 'swiper-bundle.min.css?v=12.2.0' | asset_url }}" />
+    <link rel="stylesheet" type="text/css" href="{{ 'swiper-theme.css?v=1.0.0' | asset_url }}" />
 
     <link rel="stylesheet" type="text/css" href="{{ 'slide-menu.css' | asset_url }}" />
 
@@ -132,7 +132,7 @@
 
     <link rel="stylesheet" href="{{ ('main.css?v=' ~ ver) | asset_url }}" />
 
-    <link rel="stylesheet" type="text/css" href="{{ 'custom.css?v=1.149' | asset_url }}" />
+    <link rel="stylesheet" type="text/css" href="{{ 'custom.css?v=1.150' | asset_url }}" />
 
     {% if session.lang == 'ar' %}
         <link rel="stylesheet" href="{{ 'main.rtl.css?v=1.25' | asset_url }}">
@@ -213,7 +213,8 @@
 <script src="{{ 'popper.min.js?v=1.0' | asset_url }}"></script>
 <script src="{{ 'bootstrap.min.js' | asset_url }}"></script>
 
-<script src="{{ 'slick.min.js' | asset_url }}"></script>
+<script src="{{ 'swiper-bundle.min.js?v=12.2.0' | asset_url }}"></script>
+<script src="{{ 'swiper-helper.js?v=1.0.0' | asset_url }}"></script>
 <script src="{{ 'slide-menu.ie.js?v=1.06' | asset_url }}"></script>
 
 <script type="text/javascript" src="{{ ('main.js?v=' ~ ver) | asset_url }}" defer></script>

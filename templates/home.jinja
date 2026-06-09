@@ -16,8 +16,9 @@
 {% block footer_scripts %}
     <script>
         $( window ).resize(function() {
-            $('.s-slider').slick('resize');
+            if (window.themeSwiper) {
+                window.themeSwiper.updateAll();
+            }
         });
     </script>
 {% endblock %}
-

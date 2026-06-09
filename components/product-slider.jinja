@@ -31,16 +31,20 @@
     {% endif %}
     <div class="product-slider-paragrah">
       <div class="">
-        <div class="products-slider-wrapper" style="position: relative">
+        <div class="products-slider-wrapper theme-swiper-shell" data-swiper-shell>
 
-          <div id="{{ carousel_id }}" class="products-slider s-slider loading d-block">
+          <div id="{{ carousel_id }}" class="products-slider swiper loading d-block">
+            <div class="swiper-wrapper">
             {% for rProduct in products %}
-              <div class="prod-col">
+              <div class="prod-col swiper-slide">
                 {% set product=rProduct %}{% set index=loop.index0 %}
                 {% include 'components/product-card.jinja' %}
               </div>
             {% endfor %}
+            </div>
           </div>
+          <button class="theme-swiper-button-prev theme-swiper-navigation-desktop swiper-button-prev" type="button"></button>
+          <button class="theme-swiper-button-next theme-swiper-navigation-desktop swiper-button-next" type="button"></button>
 
         </div>
       </div>
@@ -48,62 +52,33 @@
   </section>
   <script>
     window.addEventListener("load", function () {
-      var $slider = $('#{{ carousel_id }}');
+      var slider = document.getElementById('{{ carousel_id }}');
 
-      if (!$slider.length || $slider.hasClass('slick-initialized')) {
-        $slider.removeClass('loading');
+      if (!slider) {
         return;
       }
-      var arrowNextClass, arrowPrevClass;
-      if (window.appDirection === 'ltr') {
-        arrowNextClass = 'icon-keyboard_arrow_right';
-        arrowPrevClass = 'icon-keyboard_arrow_left';
-      } else {
-        arrowNextClass = 'icon-keyboard_arrow_left';
-        arrowPrevClass = 'icon-keyboard_arrow_right';
+
+      if (!window.themeSwiper) {
+        slider.classList.remove('loading');
+        return;
       }
 
-      $slider.slick({
-        slidesToShow: {{ slides_desktop }},
-        slidesToScroll: 1,
-        infinite: false,
-        arrows: false,
-        dots: false,
-        rtl: !(window.appDirection === 'ltr'),
-        responsive: [
-          {
-            breakpoint: 768,
-            settings: {
-              slidesToShow: {{ slides_mobile }},
-              arrows: false
-            }
+      window.themeSwiper.init(slider, {
+        slidesPerView: {{ slides_mobile }},
+        slidesPerGroup: 1,
+        loop: false,
+        navigation: true,
+        pagination: false,
+        breakpoints: {
+          768: {
+            slidesPerView: {{ slides_tablet }}
           },
-          {
-            breakpoint: 992,
-            settings: {
-              slidesToShow: {{ slides_tablet }},
-              arrows: true,
-              nextArrow: '<button class="slick-next slick-arrow" type="button"><span class="' + arrowNextClass + '"></span></button>',
-              prevArrow: '<button class="slick-prev slick-arrow" type="button"><span class="' + arrowPrevClass + '"></span></button>'
-            }
-          },
-          {
-            breakpoint: 99999, // desktop fallback
-            settings: {
-              slidesToShow: {{ slides_desktop }},
-              arrows: true,
-              nextArrow: '<button class="slick-next slick-arrow" type="button"><span class="' + arrowNextClass + '"></span></button>',
-              prevArrow: '<button class="slick-prev slick-arrow" type="button"><span class="' + arrowPrevClass + '"></span></button>'
-            }
+          992: {
+            slidesPerView: {{ slides_desktop }}
           }
-        ]
+        }
       });
-      $slider.removeClass('loading');
-    });
-    $(window).on('resize', function () {
-      if ($('#{{ carousel_id }}').hasClass('slick-initialized')) {
-        $('#{{ carousel_id }}').slick('setPosition');
-      }
+      slider.classList.remove('loading');
     });
   </script>
 {% endif %}

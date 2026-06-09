@@ -5,14 +5,15 @@
     <div class="container section-slider-padding-space slider-container">
         <h2 class="section-title theme-text-primary">{{ settings.title }}</h2>
 
-        <div class="testimonials-slider-wrapper" style="position: relative">
+        <div class="testimonials-slider-wrapper theme-swiper-shell" data-swiper-shell>
 
 
-            <div class="testimonials-slider s-slider">
+            <div class="testimonials-slider swiper theme-swiper-desktop-only">
+                <div class="swiper-wrapper">
 
                 {% for testimonial in safeget(settings, "testimonials", []) %}
 
-                <div class="testimonials-customer-card bg-transparent">
+                <div class="testimonials-customer-card bg-transparent swiper-slide">
                     <div class="card-body">
                         <div class="d-flex">
                             <span class="icon-account_circle_black_24dp testimonials-customer-icon"></span>
@@ -25,8 +26,13 @@
 
                 {% endfor %}
 
-
+                </div>
             </div>
+            <button class="theme-swiper-button-prev swiper-button-prev" type="button"></button>
+            <button class="theme-swiper-button-next swiper-button-next" type="button"></button>
+            {% if not settings.hide_dots and (safeget(settings, "testimonials", []) | length > 3) %}
+                <div class="theme-swiper-pagination swiper-pagination"></div>
+            {% endif %}
 
         </div>
 
@@ -37,48 +43,22 @@
 <script>
 
     document.addEventListener("DOMContentLoaded", function(){
-        var arrowNextClass, arrowPrevClass;
-        if (window.appDirection === 'ltr') {
-            arrowNextClass = 'icon-keyboard_arrow_right';
-            arrowPrevClass = 'icon-keyboard_arrow_left';
-        } else {
-            arrowNextClass = 'icon-keyboard_arrow_left';
-            arrowPrevClass = 'icon-keyboard_arrow_right';
-        }
+        var section = document.getElementById('{{ sectionId }}');
+        var slider = section ? section.querySelector('.testimonials-slider') : null;
 
-        var screenWidth = window.screen.width;
-
-        var editingMode = {% if store.editing_mode %}true{% else %}false{% endif %};
-
-        if(screenWidth >= 768 || editingMode){
-            $('[section-id={{ sectionId }}] .testimonials-slider').slick({
-                slidesToShow: 3,
-                slidesToScroll: 3,
-                infinite: false,
+        if (slider && window.themeSwiper) {
+            window.themeSwiper.initResponsive(slider, {
+                slidesPerView: 3,
+                slidesPerGroup: 3,
+                loop: false,
                 autoplay: false,
-                arrows: true,
-                dots: {% if (settings.hide_dots or (safeget(settings, "testimonials", []) | length <= 3)) %}false{% else %}true{% endif %},
-                rtl: !(window.appDirection === 'ltr'),
-                nextArrow:'<button class="slick-next slick-arrow" aria-label="Next" type="button" style=""><span class="'+arrowNextClass+'"></span></button>',
-                prevArrow:'<button class="slick-prev slick-arrow" aria-label="Previous" type="button" style=""><span class="'+arrowPrevClass+'"></span></button>',
-                responsive: [
-                    {
-                        breakpoint: 992,
-                        settings: {
-                            slidesToShow: 3,
-                            slidesToScroll: 3
-                        }
-                    },
-                    {
-                        breakpoint: 768,
-                        settings: "unslick"
-                    }
-                ]
+                navigation: true,
+                pagination: {% if (settings.hide_dots or (safeget(settings, "testimonials", []) | length <= 3)) %}false{% else %}true{% endif %}
+            }, {
+                minWidth: 768
             });
         }
     });
 </script>
-
-
 
 
