@@ -1,0 +1,165 @@
+<div id="sidenav-overlay" onclick="closeSlidingMenu()"></div>
+<nav class="slide-menu menu-header-theme-bg-primary menu-header-theme-bg-primary-brightness-100" id="sliding-menu">
+    <ul class="theme-text-for-primary-bg menu-header-theme-bg-primary menu-header-theme-bg-primary-brightness-100 menu-header-theme-text-for-primary-bg">
+        <li>
+            <div style="height: 50px"></div>
+        </li>
+        {% for menu in store.settings.menus.main_menu.items %}
+            {% if menu.url %}
+            <li class="slide-menu-ul-li {% if menu.slug == 'all_categories' %} all-categories {% endif %}"  onclick="scrollToSubMenu(this)">
+                <a href="{{ menu.url | localized_url if menu.resource_type != 'url' else menu.url }}" title="{{ menu.label }}" class="menu-link">
+                    <span class="px-1 clickable-span">{{ menu.label }}</span>
+                </a>
+                {% if menu.items | length > 0 %}
+                    <ul>
+                        {% for menu_sub in menu.items %}
+                            <li class="slide-menu-ul-li">
+                                <a href="{{ menu_sub.url | localized_url if menu_sub.resource_type != 'url' else menu_sub.url  }}">{{ menu_sub.label }}</a>
+                                {% if menu_sub.items | length > 0 %}
+                                    <ul>
+                                        {% for menu_sub_sub in menu_sub.items %}
+                                            <li class="slide-menu-ul-li">
+                                                <a href="{{ menu_sub_sub.url | localized_url if menu_sub_sub.resource_type != 'url' else menu_sub_sub.url }}">
+                                                    {{ menu_sub_sub.label }}
+                                                </a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </li>
+            {% endif %}
+        {% endfor %}
+        <li class="slide-menu-ul-li">
+            <a href="/shipping-and-payment"><span>{{ _("Payment and delivery options") }}</span></a>
+        </li>
+        <li>
+            <div class="slide-menu-static">
+                <div class="account-lang-currency upper-bar">
+                    <div class="container d-flex flex-wrap">
+                        <div class="account-area">
+                            <!-- Default Login button (shown initially) -->
+                            <button type="button" onclick="handleLoginAction()" class="btn btn-dark account-btn" id="login-btn-alt">
+                                <span class="icon-account_circle_black_24dp" style="position: relative; top: 1px"></span>
+                                <span style="position: relative; bottom: 2px">&nbsp;{{ _("Login") }}&nbsp;</span>
+                            </button>
+
+                            <!-- Placeholder for Hello, Customer (hidden initially) -->
+                            <button type="button" onclick="window.location.href='/account-profile'" class="btn btn-dark account-btn" id="hello-btn-alt" style="display: none;">
+                                <span class="icon-account_circle_black_24dp" style="position: relative; top: 1px"></span>
+                                <span id="customer-greeting-alt" style="position: relative; bottom: 2px">{{ _("Hello") }} ...</span>
+                            </button>
+                        </div>
+
+                        {% set multiple_languages = store.languages | length > 1 %}
+                        {% set header_options_raw = safeget(settings, "header_options", []) %}
+                        {% set header_options =
+                            header_options_raw
+                            if header_options_raw is iterable and header_options_raw is not boolean and header_options_raw is not string
+                            else []
+                        %}
+
+                        {% set show_country = 'hide_country' not in header_options %}
+                        {% set show_language = 'hide_language' not in header_options %}
+
+                        {% if show_country or (multiple_languages and show_language) %}
+                            <div class="language-currency language-currency-menu d-flex justify-content-between" onclick="zidOpenRegionSettingDialog()">
+
+                                {% if session.lang == 'en' %}
+                                    {% set change_to_lang = 'ar' %}
+                                    {% set change_to_lang_name = 'العربية' %}
+                                {% else %}
+                                    {% set change_to_lang = 'en' %}
+                                    {% set change_to_lang_name = 'English' %}
+                                {% endif %}
+
+
+
+                                {% if show_country %}
+                                    {% if session.shipping_destination %}
+                                        <div class="currency-button-area d-flex justify-content-center">
+                                            <button class="c-btn currency-btn currency-btn-menu">{{ session.shipping_destination.country.name }} - {{ session.shipping_destination.name }}</button>
+                                        </div>
+                                    {% else %}
+                                        <div class="currency-button-area d-flex justify-content-center">
+                                            <button class="c-btn currency-btn currency-btn-menu">{{ session.country.names[session.lang] }}</button>
+                                        </div>
+                                    {% endif %}
+                                {% endif %}
+                                
+                                {% if show_country and (multiple_languages and show_language) %}
+                                    <div class="vertical-line vertical-line-menu"></div>
+                                {% endif %}
+
+                                {% if multiple_languages and show_language %}
+                                    <div class="language-button-area d-flex justify-content-between">
+                                        <button type="submit" class='c-btn language-btn language-btn-menu d-flex justify-content-between align-items-center'>
+                                            <span class="px-2">{{ change_to_lang_name }}</span>&nbsp;
+                                            <span class="icon-language_white icon-language_white-menu"></span>
+                                        </button>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </li>
+        <li>
+            <div style="height: 250px"></div>
+        </li>
+    </ul>
+</nav>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    function cleanUrl(url) {
+        if (url.startsWith("//")) {
+            url = "/" + url.slice(2);
+        }
+        url = url.replace(/([^:]\/)\/+/g, "$1");
+        if (url !== '/' && url.endsWith('/')) {
+            url = url.slice(0, -1);
+        }
+        return url;
+    }
+    var menuLinks = document.querySelectorAll('.menu-link');
+    menuLinks.forEach(function(link) {
+        link.href = cleanUrl(link.getAttribute('href'));
+        link.addEventListener('click', function(event) {
+            event.preventDefault();
+        });
+    });
+    var clickableSpans = document.querySelectorAll('.clickable-span');
+    clickableSpans.forEach(function(span) {
+        span.addEventListener('click', function(event) {
+            event.stopPropagation();
+            var parentAnchor = span.closest('a');
+            if (parentAnchor) {
+                window.location.href = parentAnchor.href;
+            }
+        });
+    });
+});
+document.addEventListener('zid-customer-fetched', function (event) {
+    const customer = event.detail.customer;
+    if (customer && customer.name) {
+        // Update greeting text
+        const greeting = document.getElementById('customer-greeting-alt');
+        // Extract the "Hello" text from the existing greeting element (it contains translated text)
+        const greetingText = greeting.textContent.trim();
+        const helloWord = greetingText.split(' ')[0]; // Get "Hello" or translated equivalent (e.g., "مرحبا")
+        greeting.textContent = `${helloWord} ${customer.name}`;
+
+        // Show Hello button, hide Login button
+        document.getElementById('hello-btn-alt').style.display = 'inline-block';
+        document.getElementById('login-btn-alt').style.display = 'none';
+    }
+});
+
+
+</script>

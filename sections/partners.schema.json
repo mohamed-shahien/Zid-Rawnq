@@ -1,0 +1,57 @@
+{
+  "section_id": "uuid",
+  "template": "sections/partners.jinja",
+  "icon": "group-line",
+  "name": {
+    "ar": "شركائنا",
+    "en": "Partners"
+  },
+  "settings": [
+    {
+      "id": "title",
+      "type": "text",
+      "label": {
+        "ar": "العنوان",
+        "en": "text"
+      }
+    },
+    {
+      "id": "store_partners",
+      "type": "list",
+      "label": {
+        "ar": "الصورة",
+        "en": "Picture"
+      },
+      "max_items": 20,
+      "info": {
+        "ar": "",
+        "en": "This is an info text sample here"
+      },
+      "settings": [
+        {
+          "id": "url",
+          "type": "url",
+          "label": {
+            "ar": "الرابط",
+            "en": "Link"
+          }
+        },
+        {
+          "id": "image",
+          "type": "image",
+          "label": {
+            "ar": "الصورة",
+            "en": "Image"
+          },
+          "info": {
+            "ar": "ارفع صورة بحجم ٢٠٠ *٢٠٠ ",
+            "en": "This is an info text sample here"
+          }
+        }
+      ]
+    }
+  ],
+  "meta": {
+    "type": "partners"
+  }
+}

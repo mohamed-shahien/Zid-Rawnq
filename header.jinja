@@ -1,0 +1,33 @@
+<header id="{{ sectionId }}" section-id="{{ sectionId }}" class='d-flex flex-column'>
+
+    {% include 'vitrin:shared/store_messages.jinja' %}
+    {% set ab_settings=settings %}{% include 'components/header-announcement-bar.jinja' %}
+    {% set multiple_countries = store.countries | length > 1 %}
+    {% set multiple_languages = store.languages | length > 1 %}
+
+    {% set header_settings=settings %}{% include 'components/header-account-lang-currency.jinja' %}
+
+
+
+  <div {% if safeget(settings, "header_sticky", true) %} id="fixed-header" {% endif %} style="z-index: 3">
+    <!-- input search for mobile view -->
+    <div style="z-index: 3">
+        {% set header_settings=settings %}{% include 'components/header-search-header.jinja' %}
+    </div>
+    <div style="position: relative; z-index: -1">
+        <div class="sm-search-div">
+          <div class="autocomplete" style="position: relative">
+            <input type="text"
+                   data-cat-id="{{ category.id if category is defined else '' }}"
+                   class="form-control search-input-input"
+                   placeholder="{% if settings.header_search_placeholder %}{{ settings.header_search_placeholder }}{% else %}{{ _('Search') }}{% endif %}"
+            >
+            <div class="autocomplete-items"></div>
+          </div>
+        </div>
+    </div>
+  </div>
+
+    {% set menu_settings=settings %}{% include 'components/header-sliding-menu.jinja' %}
+    {% set menu_settings=settings %}{% include 'components/header-mega-menu.jinja' %}
+</header>
