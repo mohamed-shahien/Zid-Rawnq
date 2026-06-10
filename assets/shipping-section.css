@@ -155,14 +155,14 @@
     text-decoration: underline;
 }
 
-.shipping-cities-modal .icon-search {
+.theme-dialog--shipping .icon-search {
     position: absolute;
     right: 15px;
     top: 12px;
     font-size: 18px;
 }
 
-.rtl .shipping-cities-modal .icon-search {
+.rtl .theme-dialog--shipping .icon-search {
     right: unset;
     left: 15px;
 }

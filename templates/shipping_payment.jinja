@@ -70,10 +70,9 @@
                                                                     {% endfor %}
 
                                                                 {% if shipping_method.delivery_option_cities | length > 3 %}
-                                                                    <span onclick="showModal()"
-                                                                          class="color-success cursor-pointer text-decoration-underline"
-                                                                          role="button"  href="#" data-toggle="modal"
-                                                                          data-target="#shipping-cities-{{ shipping_method.id }}">
+                                                                    <span class="color-success cursor-pointer text-decoration-underline"
+                                                                          role="button" tabindex="0"
+                                                                          data-dialog-open="#shipping-cities-{{ shipping_method.id }}">
                                                                         {{ _("And") }} {{ (shipping_method.delivery_option_cities | length) - 3 }} {{ _("Cities") }}
                                                                     </span>
                                                                 {% endif %}
@@ -120,18 +119,21 @@
 
 
                                         {% if shipping_method.delivery_option_cities | length > 3 %}
-                                            <div class="modal fade shipping-cities-modal" id="shipping-cities-{{ shipping_method.id }}"
-                                                 tabindex="-1" role="dialog"
-                                                 aria-labelledby="myModalLabel">
-                                                <div class="modal-dialog" role="document">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <button type="button" class="close" data-dismiss="modal" style="position: absolute"
-                                                                    aria-label="Close"><span
-                                                                        aria-hidden="true">&times;</span></button>
-                                                            <h4 class="modal-title" id="myModalLabel">{{ _("Covered Cities") }}</h4>
+                                            <div class="theme-dialog theme-dialog--shipping"
+                                                 id="shipping-cities-{{ shipping_method.id }}" role="dialog"
+                                                 aria-modal="true"
+                                                 aria-labelledby="shipping-cities-title-{{ shipping_method.id }}"
+                                                 aria-hidden="true">
+                                                <div class="theme-dialog-backdrop" data-dialog-backdrop>
+                                                    <div class="theme-dialog-panel" role="document" tabindex="-1">
+                                                        <button type="button" class="theme-dialog-close" data-dialog-close
+                                                                aria-label="{{ _('Close') }}"><span
+                                                                    aria-hidden="true">&times;</span></button>
+                                                        <div class="theme-dialog-header">
+                                                            <h4 class="theme-dialog-title"
+                                                                id="shipping-cities-title-{{ shipping_method.id }}">{{ _("Covered Cities") }}</h4>
                                                         </div>
-                                                        <div class="modal-body" style="overflow: scroll">
+                                                        <div class="theme-dialog-body">
 
                                                             <div class="form-element" style="position: relative">
                                                                 <i class="icon-search"></i>
@@ -154,9 +156,9 @@
                                                             </ul>
 
                                                         </div>
-                                                        <div class="modal-footer">
+                                                        <div class="theme-dialog-footer">
                                                             <button type="button" class="btn btn-default"
-                                                                    data-dismiss="modal">{{ _("Close") }}
+                                                                    data-dialog-close>{{ _("Close") }}
                                                             </button>
                                                         </div>
                                                     </div>

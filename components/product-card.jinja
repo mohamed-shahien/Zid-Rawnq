@@ -49,7 +49,7 @@
             <div class="product-card-rating-wrapper" style="height: 18px">
                 {% if product.rating %}
                     {% set rating=product.rating.average %}{% include 'components/rating-stars.jinja' %}
-                    {% if product.rating.total_count > 0 %}<span class="product-card-rating-count">({{ product.rating.total_count }} {% if session.lang == 'ar' %}تقييم{% else %}ratings{% endif %})</span>{% endif %}
+                    {% if product.rating.total_count > 0 %}<span class="product-card-rating-count">({{ product.rating.total_count }} {{ _("ratings") }})</span>{% endif %}
                 {% endif %}
             </div>
         {% endif %}

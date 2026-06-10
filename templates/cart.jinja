@@ -26,15 +26,16 @@
     </section>
 
 
-    <div class="modal" id="searchCitiesModal" tabindex="-1" role="dialog">
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-body" style="padding: 10px 20px 20px">
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+    <div class="theme-dialog theme-dialog--cities" id="searchCitiesModal" role="dialog"
+      aria-modal="true" aria-labelledby="searchCitiesModalTitle" aria-hidden="true">
+      <div class="theme-dialog-backdrop" data-dialog-backdrop>
+        <div class="theme-dialog-panel" role="document" tabindex="-1">
+          <button type="button" class="theme-dialog-close" data-dialog-close aria-label="{{ _('Close') }}">
                 <span aria-hidden="true">&times;</span>
-              </button>
+          </button>
+          <div class="theme-dialog-body">
 
-              <h5 class="text-center py-3 mb-0 text-color-primary">
+              <h5 class="text-center py-3 mb-0 text-color-primary" id="searchCitiesModalTitle">
                 {{ _("Enjoy free shipping for the cities") }}
               </h5>
 
@@ -57,7 +58,7 @@
               </div>
 
               <div class="d-flex justify-content-center mt-3">
-                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal" style="width: 120px">{{ _("Cancel") }}</button>
+                <button type="button" class="btn btn-outline-secondary" data-dialog-close style="width: 120px">{{ _("Cancel") }}</button>
               </div>
           </div>
         </div>
@@ -203,7 +204,7 @@
 
                             <div class="text-muted mr-1 flex-shrink-0 free-shipping-rule-read-more 
                                 {% if status == 'min_not_reached' %}d-inline-block{% else %}d-none{% endif %}">
-                                <a data-toggle="modal" data-target="#searchCitiesModal" href="#">
+                                <a data-dialog-open="#searchCitiesModal" href="#">
                                 <small>{{ _("Read More") }}</small>
                                 </a>
                             </div>

@@ -595,3 +595,36 @@ msgstr "لا توجد أسئلة سابقة"
 
 msgid "You can add your question to know more about the product"
 msgstr "يمكنك إضافة سؤالك لمعرفة المزيد عن المنتج"
+
+msgid "Leave your review"
+msgstr "اترك تقييمك"
+
+msgid "Hide my name in the customer list"
+msgstr "إخفاء اسمي في قائمة العملاء"
+
+msgid "Write your comment here"
+msgstr "اكتب تعليقك هنا"
+
+msgid "Attach images with comments, or upload languages."
+msgstr "أرفق صوراً مع التعليقات، أو ارفع ملفات."
+
+msgid "Maximum number of images allowed is 3."
+msgstr "الحد الأقصى للصور المسموح بها هو 3."
+
+msgid "Supported formats: png. jpg. jpeg. gif"
+msgstr "الصيغ المدعومة: png. jpg. jpeg. gif"
+
+msgid "Submit a review"
+msgstr "إرسال التقييم"
+
+msgid "cancel"
+msgstr "إلغاء"
+
+msgid "ADD TO BAG"
+msgstr "إضافة للحقيبة"
+
+msgid "Pairs nicely with"
+msgstr "يتناسب بشكل جميل مع"
+
+msgid "See it in action"
+msgstr "شاهد المنتج"

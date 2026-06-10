@@ -1,30 +1,33 @@
-<div class="modal fade" id="addProductQuestionModal" tabindex="-1" role="dialog"
-  aria-labelledby="addProductQuestionModal" aria-hidden="true"
+<div class="theme-dialog theme-dialog--question" id="addProductQuestionModal" role="dialog"
+  aria-modal="true" aria-labelledby="addProductQuestionTitle" aria-hidden="true"
+  data-dialog-portal
   data-question-success="{{ _('Your question has been sent successfully. You will receive a notification if it is answered.') }}"
   data-question-success-header="{{ _('Send Successfully') }}"
   data-question-error="{{ _('failed to send') }}">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-comment-content">
-      <div class="modal-body" style="padding: 20px">
+  <div class="theme-dialog-backdrop" data-dialog-backdrop>
+    <div class="theme-dialog-panel" role="document" tabindex="-1">
+      <div class="theme-dialog-header">
+        <h3 class="theme-dialog-title" id="addProductQuestionTitle">{{ _("Add your question") }}</h3>
+      </div>
+      <div class="theme-dialog-body">
         <form>
-          <div class="d-flex align-items-center mt-3 mb-3">
-            <span class="modal-product-title">{{ _("Add your question") }}</span>
-          </div>
-
-          <div class="form-group">
+          <div class="form-group mb-4">
+            <label class="d-block mb-2" style="font-size: 14px; font-weight: 500; color: #111;">{{ _("Name") }}</label>
             <input rows="4" name="name" class="form-control" placeholder="{{ _("Name") }}" />
             <p class="d-none input-error-name mt-1 text-danger">{{ _("This field is required") }}</p>
           </div>
-          <div class="form-group">
+          <div class="form-group mb-4">
+            <label class="d-block mb-2" style="font-size: 14px; font-weight: 500; color: #111;">{{ _("Question") }}</label>
             <textarea rows="4" name="question" placeholder="{{ _("Write your question here") }}" class="form-control"></textarea>
             <p class="d-none input-error-question mt-1 text-danger">{{ _("This field is required") }}</p>
           </div>
-          <div class="form-group">
+          <div class="form-group mb-4">
+            <label class="d-block mb-2" style="font-size: 14px; font-weight: 500; color: #111;">{{ _("Email") }}</label>
             <input rows="4" name="email" class="form-control" placeholder="{{ _("Email") }}"/>
             <p class="d-none input-error-email mt-1 text-danger">{{ _("This field is required") }}</p>
             <p class="d-none input-error-invalid-email mt-1 text-danger">{{ _("Email is incorrect") }}</p>
           </div>
-          <div class="form-group mt-3 mb-3">
+          <div class="form-group my-3">
             <label>
               <span class="checkbox-container">
                 <input id="is_anonymous" class="checkbox" type="checkbox" name="is_anonymous" />
@@ -33,12 +36,11 @@
               <span class="custom-checkbox-label"><span>{{ _("Send as anonymous") }}</span></span>
             </label>
           </div>
-          <div class="form-group bottom-buttons">
-            <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Close">{{ _("Cancel") }}</button>
-            <span>&nbsp;&nbsp;</span>
-            <button type="button" class="btn btn-primary btn-submit-new-question" onclick="productsQuestions.submitQuestion('{{product.id}}')">
-              <img class="add-review-progress d-none" src="{{ 'spinner.gif' | asset_url }}" width="15" height="15" loading="lazy" decoding="async" alt="" />
-{{ _("Send") }}
+          <div class="bottom-buttons d-flex align-items-center" style="gap: 16px;">
+            <button type="button" class="btn btn-default" data-dialog-close style="flex: 1; border: 1px solid #111; background: #fff; color: #111; padding: 12px; font-weight: 500; border-radius: var(--border-radius-none, 0);">{{ _("Cancel") }}</button>
+            <button type="button" class="btn btn-primary btn-submit-new-question d-flex justify-content-center align-items-center" onclick="productsQuestions.submitQuestion('{{product.id}}')" style="flex: 1; border: 1px solid #111; background: #111; color: #fff; padding: 12px; font-weight: 500; border-radius: var(--border-radius-none, 0);">
+              <img class="add-review-progress d-none ml-2 mr-2" src="{{ 'spinner.gif' | asset_url }}" width="15" height="15" loading="lazy" decoding="async" alt="" />
+              {{ _("Send") }}
             </button>
           </div>
         </form>

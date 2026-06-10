@@ -1,0 +1,84 @@
+<div class="theme-dialog theme-dialog--review" id="addProductReviewDialog" role="dialog"
+  aria-modal="true" aria-labelledby="addProductReviewTitle" aria-hidden="true"
+  data-dialog-portal
+  data-product-id="{{ product.id }}"
+  data-review-authenticated="{{ 'false' if session.is_guest else 'true' }}"
+  data-review-success="{{ _('Your review has been sent successfully.') }}"
+  data-review-error="{{ _('Failed to send your review. Please try again.') }}"
+  data-review-rating-error="{{ _('Please select a rating.') }}"
+  data-review-images-error="{{ _('Only image files can be uploaded.') }}">
+  <div class="theme-dialog-backdrop" data-dialog-backdrop>
+    <div class="theme-dialog-panel" role="document" tabindex="-1">
+      <form class="product-review-form" data-product-review-form novalidate>
+        <div class="theme-dialog-header d-flex justify-content-between align-items-center" style="padding-bottom: 16px; border-bottom: 1px solid #ececec;">
+          <h3 class="theme-dialog-title" id="addProductReviewTitle" style="font-size: 16px; margin: 0; font-weight: 500; text-align: left;">{{ _("Leave your review") }}</h3>
+          
+          <div class="product-review-rating-input d-flex" role="radiogroup" aria-label="{{ _('Rating') }}" data-review-rating-options style="gap: 2px;">
+              <input type="hidden" name="rating" value="">
+              {% for rating_value in range(1, 6) %}
+              <button type="button" class="product-review-rating-star p-0 m-0 bg-transparent border-0" style="width: 24px; height: 24px; cursor: pointer;" data-review-rating="{{ rating_value }}" role="radio" aria-checked="false" aria-label="{{ rating_value }} / 5">
+                  <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+                      <path d="M12 2.8l2.82 5.72 6.31.92-4.57 4.45 1.08 6.28L12 17.2l-5.64 2.97 1.08-6.28-4.57-4.45 6.31-.92L12 2.8z"></path>
+                  </svg>
+              </button>
+              {% endfor %}
+          </div>
+        </div>
+
+        <div class="theme-dialog-body" style="padding-top: 16px;">
+            <p class="product-review-field-error d-none mb-3" data-review-rating-error>
+              {{ _("Please select a rating.") }}
+            </p>
+
+            <div class="form-group mb-3 text-left" dir="auto">
+              <label style="display: inline-flex; align-items: center; cursor: pointer; margin: 0;gap: 4px;">
+                <span class="checkbox-container">
+                  <input class="checkbox" type="checkbox" name="is_anonymous">
+                  <span class="custom-checkmark"></span>
+                </span>
+                <span class="custom-checkbox-label" style="font-size: 14px; font-weight: 500; color: #111;">{{ _("Hide my name in the customer list") }}</span>
+              </label>
+            </div>
+
+            <div class="form-group mb-4">
+              <textarea id="productReviewComment" rows="6" name="comment" class="form-control"
+                placeholder="{{ _('Write your comment here') }}" style="resize: none; border: 1px solid #ececec; border-radius: var(--border-radius-none, 0);"></textarea>
+            </div>
+
+            <div class="form-group mb-4">
+              <label class="product-review-upload d-flex flex-column align-items-center justify-content-center text-center w-100" for="productReviewImages" style="background: #f9f9f9; border: 1px dashed #dcdcdc; padding: 24px 16px; cursor: pointer; margin: 0;">
+                <input id="productReviewImages" type="file" name="images" accept="image/*"
+                  multiple data-review-images>
+                
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 12px; color: #111;">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                  <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                  <polyline points="21 15 16 10 5 21"></polyline>
+                </svg>
+
+                <span style="font-weight: 600; font-size: 14px; color: #111; margin-bottom: 8px;">{{ _("Attach images with comments, or upload languages.") }}</span>
+                <span style="font-size: 13px; color: #666; margin-bottom: 4px;">{{ _("Maximum number of images allowed is 3.") }}</span>
+                <span style="font-size: 13px; color: #666;">{{ _("Supported formats: png. jpg. jpeg. gif") }}</span>
+              </label>
+              <p class="product-review-field-error d-none" data-review-images-error>
+                {{ _("Only image files can be uploaded.") }}
+              </p>
+              <div class="product-review-image-previews" data-review-images-preview
+                aria-live="polite"></div>
+            </div>
+
+            <p class="product-review-status d-none" data-review-status aria-live="polite"></p>
+
+            <div class="form-group bottom-buttons d-flex align-items-center" style="gap: 16px; margin-bottom: 0;">
+              <button type="submit" class="btn btn-primary product-review-submit d-flex justify-content-center align-items-center" style="flex: 1; border: 1px solid #111; background: #111; color: #fff; padding: 12px; font-weight: 500; border-radius: var(--border-radius-none, 0);">
+                <img class="product-review-progress d-none mr-2 ml-2" src="{{ 'spinner.gif' | asset_url }}"
+                  width="15" height="15" loading="lazy" decoding="async" alt="">
+                <span>{{ _("Submit a review") }}</span>
+              </button>
+              <button type="button" class="btn btn-default" data-dialog-close style="flex: 1; border: 1px solid #111; background: #fff; color: #111; padding: 12px; font-weight: 500; border-radius: var(--border-radius-none, 0);">{{ _("cancel") }}</button>
+            </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -21,8 +21,7 @@
                     <button id="products-list-filter"
                             type="button"
                             class="btn btn-filter filter-block-width d-none d-lg-block"
-                            data-toggle="modal"
-                            data-target="#filterModal"
+                            data-dialog-open="#filterModal"
                     >
                         <span>{{ _("Filter") }}</span>
                         &nbsp;
@@ -101,18 +100,17 @@
 <div id="filters-form-collapse-sm" class="collapse mt-3">
     {% include 'components/products-filter-form.jinja' %}
 </div>
-<div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-body" style="position: relative">
-                <button id="products-list-filter-form-close"
-                        type="button"
-                        class="close btn" data-dismiss="modal" aria-label="Close">
-                    <span class="icon-times2"></span>
-                </button>
+<div class="theme-dialog theme-dialog--filter" id="filterModal" role="dialog"
+    aria-modal="true" aria-hidden="true" aria-label="{{ _('Filter') }}">
+    <div class="theme-dialog-backdrop" data-dialog-backdrop>
+        <div class="theme-dialog-panel" role="document" tabindex="-1">
+            <button id="products-list-filter-form-close" type="button"
+                class="theme-dialog-close" data-dialog-close aria-label="{{ _('Close') }}">
+                <span class="icon-times2" aria-hidden="true"></span>
+            </button>
+            <div class="theme-dialog-body">
                 {% include 'components/products-filter-form.jinja' %}
             </div>
         </div>
     </div>
 </div>
-

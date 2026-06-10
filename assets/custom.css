@@ -509,11 +509,6 @@
     .products-list .prod-col, .products-list .prod-col-attr{
         width: 50%;
     }
-
-    .product-item {
-        width: 135px;
-    }
-
     .products-list .prod-col .product-item {
         width: 100%;
     }

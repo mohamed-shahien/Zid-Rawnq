@@ -38,8 +38,10 @@
              {% endif %}
 
             &nbsp;
-            <!-- Button trigger modal -->
-            <a href="{{ url_for('add_product_review', slug=product.id) }}" class="btn btn-primary add-review-btn"><span class="icon-add_circle"></span>{{ _("Add Comment ") }} </a>
+            <button type="button" class="btn btn-primary add-review-btn"
+               data-review-dialog-open="#addProductReviewDialog">
+               <span class="icon-add_circle"></span>{{ _("Add Comment ") }}
+            </button>
          </div>
          <div class="reviews-break-down-div description-paragrah">
             <div class="d-flex align-items-center mt-3 mb-4">
