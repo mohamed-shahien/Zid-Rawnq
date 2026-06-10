@@ -559,29 +559,32 @@ $('.search-input-input').on('keyup', function (e) {
 document.addEventListener('DOMContentLoaded', function () {
   fetchCart();
   productsQuestions.checkAddQuestionPossibility();
+  productsReviews.init();
 
   /* mobile slide menu */
   window.slidingMenuElement = document.getElementById('sliding-menu');
-  window.slidingMenu = new SlideMenu(window.slidingMenuElement, {
-    position: window.appDirection === 'ltr' ? 'left' : 'right',
-    showBackLink: true,
-    backLinkBefore:
-      window.appDirection === 'ltr'
-        ? '<span class="icon-arrow_left slide-menu-arrow slide-menu-arrow-back"></span>'
-        : '<span class="icon-arrow_right slide-menu-arrow slide-menu-arrow-back"></span>',
-    submenuLinkAfter:
-      window.appDirection === 'ltr'
-        ? '<span class="icon-arrow_right slide-menu-arrow"></span>'
-        : '<span class="icon-arrow_left slide-menu-arrow"></span>',
-  });
+  if (typeof SlideMenu !== 'undefined') {
+    window.slidingMenu = new SlideMenu(window.slidingMenuElement, {
+      position: window.appDirection === 'ltr' ? 'left' : 'right',
+      showBackLink: true,
+      backLinkBefore:
+        window.appDirection === 'ltr'
+          ? '<span class="icon-arrow_left slide-menu-arrow slide-menu-arrow-back"></span>'
+          : '<span class="icon-arrow_right slide-menu-arrow slide-menu-arrow-back"></span>',
+      submenuLinkAfter:
+        window.appDirection === 'ltr'
+          ? '<span class="icon-arrow_right slide-menu-arrow"></span>'
+          : '<span class="icon-arrow_left slide-menu-arrow"></span>',
+    });
 
-  window.slidingMenuElement.addEventListener('sm.open', function () {
-    $('body').addClass('sidenav-open');
-  });
+    window.slidingMenuElement.addEventListener('sm.open', function () {
+      $('body').addClass('sidenav-open');
+    });
 
-  window.slidingMenuElement.addEventListener('sm.close', function () {
-    $('body').removeClass('sidenav-open');
-  });
+    window.slidingMenuElement.addEventListener('sm.close', function () {
+      $('body').removeClass('sidenav-open');
+    });
+  }
 
   $('.search-input-input').on('input', function (event) {
     fetchProductsSearchDebounce(event.currentTarget);
@@ -784,7 +787,9 @@ class ProductsQuestions {
   checkAddQuestionPossibility() {
     $('#addQuestionButton').click(function () {
       if (window.customerAuthState && window.customerAuthState.isAuthenticated) {
-        $('#addProductQuestionModal').modal('show');
+        if (window.themeDialog) {
+          window.themeDialog.open('#addProductQuestionModal', this);
+        }
         productsQuestions.fillCustomerData();
       } else {
         // Open login popup without adding redirect_to URL (stays on same page)
@@ -821,7 +826,9 @@ class ProductsQuestions {
       } finally {
         $('.add-review-progress').addClass('d-none');
 
-        $('#addProductQuestionModal').modal('hide');
+        if (window.themeDialog) {
+          window.themeDialog.close('#addProductQuestionModal');
+        }
         this.submitButton.removeAttr('disabled');
       }
     }
@@ -829,6 +836,320 @@ class ProductsQuestions {
 }
 
 const productsQuestions = new ProductsQuestions();
+
+class ProductsReviews {
+  constructor() {
+    this.isBound = false;
+  }
+
+  init() {
+    if (this.isBound || !document.querySelector('[data-product-review-form]')) {
+      return;
+    }
+
+    this.isBound = true;
+    document.querySelectorAll('.theme-dialog--review').forEach(dialog => {
+      this.bindDialog(dialog);
+    });
+
+    document.addEventListener('click', event => {
+      const trigger = event.target.closest('[data-review-dialog-open]');
+      if (!trigger) {
+        return;
+      }
+
+      event.preventDefault();
+      const dialog = this.getDialog(trigger.getAttribute('data-review-dialog-open'));
+      if (!dialog) {
+        return;
+      }
+
+      if (!this.isAuthenticated(dialog)) {
+        handleLoginAction('', false);
+        return;
+      }
+
+      if (window.themeDialog) {
+        window.themeDialog.open(dialog, trigger);
+      }
+    });
+  }
+
+  getDialog(selector) {
+    if (!selector) {
+      return null;
+    }
+
+    try {
+      return document.querySelector(selector);
+    } catch (error) {
+      return null;
+    }
+  }
+
+  isAuthenticated(dialog) {
+    return Boolean(
+      (window.customerAuthState && window.customerAuthState.isAuthenticated)
+      || dialog.getAttribute('data-review-authenticated') === 'true'
+    );
+  }
+
+  setAuthenticated(isAuthenticated) {
+    document.querySelectorAll('.theme-dialog--review').forEach(dialog => {
+      dialog.setAttribute('data-review-authenticated', isAuthenticated ? 'true' : 'false');
+    });
+  }
+
+  bindDialog(dialog) {
+    if (!dialog || dialog.__productReviewBound) {
+      return;
+    }
+
+    const form = dialog.querySelector('[data-product-review-form]');
+    const ratingInput = form && form.querySelector('input[name="rating"]');
+    const ratingButtons = form
+      ? Array.from(form.querySelectorAll('[data-review-rating]'))
+      : [];
+    const ratingError = form && form.querySelector('[data-review-rating-error]');
+    const imagesInput = form && form.querySelector('[data-review-images]');
+    const imagesError = form && form.querySelector('[data-review-images-error]');
+    const previews = form && form.querySelector('[data-review-images-preview]');
+    const submitButton = form && form.querySelector('.product-review-submit');
+    const progress = form && form.querySelector('.product-review-progress');
+    const status = form && form.querySelector('[data-review-status]');
+
+    if (!form || !ratingInput || !submitButton) {
+      return;
+    }
+
+    dialog.__productReviewBound = true;
+    dialog.__productReviewFiles = [];
+    dialog.__productReviewUrls = [];
+
+    const setStatus = (message, isError) => {
+      if (!status) {
+        return;
+      }
+      status.textContent = message || '';
+      status.classList.toggle('d-none', !message);
+      status.classList.toggle('is-error', Boolean(message && isError));
+      status.classList.toggle('is-success', Boolean(message && !isError));
+    };
+
+    const setRating = value => {
+      const rating = Math.max(0, Math.min(5, Number(value) || 0));
+      ratingInput.value = rating || '';
+      ratingButtons.forEach(button => {
+        const isActive = Number(button.getAttribute('data-review-rating')) <= rating;
+        const isSelected = Number(button.getAttribute('data-review-rating')) === rating;
+        button.classList.toggle('is-active', isActive);
+        button.setAttribute('aria-checked', isSelected ? 'true' : 'false');
+        button.setAttribute('tabindex', isSelected || (!rating && button === ratingButtons[0])
+          ? '0'
+          : '-1');
+      });
+      if (ratingError) {
+        ratingError.classList.toggle('d-none', rating > 0);
+      }
+    };
+
+    const clearPreviewUrls = () => {
+      dialog.__productReviewUrls.forEach(url => {
+        window.URL.revokeObjectURL(url);
+      });
+      dialog.__productReviewUrls = [];
+    };
+
+    const renderPreviews = () => {
+      if (!previews) {
+        return;
+      }
+
+      clearPreviewUrls();
+      previews.innerHTML = '';
+      dialog.__productReviewFiles.forEach((file, index) => {
+        const item = document.createElement('div');
+        const image = document.createElement('img');
+        const remove = document.createElement('button');
+        const imageUrl = window.URL.createObjectURL(file);
+
+        dialog.__productReviewUrls.push(imageUrl);
+        item.className = 'product-review-image-preview';
+        image.src = imageUrl;
+        image.alt = file.name;
+        remove.type = 'button';
+        remove.className = 'product-review-image-remove';
+        remove.setAttribute('data-review-image-remove', String(index));
+        remove.setAttribute('aria-label', 'Remove image');
+        remove.innerHTML = '&times;';
+        item.appendChild(image);
+        item.appendChild(remove);
+        previews.appendChild(item);
+      });
+    };
+
+    const resetForm = () => {
+      form.reset();
+      dialog.__productReviewFiles = [];
+      if (imagesInput) {
+        imagesInput.value = '';
+      }
+      clearPreviewUrls();
+      if (previews) {
+        previews.innerHTML = '';
+      }
+      if (imagesError) {
+        imagesError.classList.add('d-none');
+      }
+      setStatus('', false);
+      setRating(0);
+    };
+
+    const showToast = (type, message) => {
+      const toaster = window.zid && window.zid.toaster;
+      const method = type === 'success' ? 'showSuccess' : 'showError';
+      if (toaster && typeof toaster[method] === 'function') {
+        toaster[method](message);
+      }
+    };
+
+    ratingButtons.forEach((button, index) => {
+      button.addEventListener('click', () => {
+        setRating(button.getAttribute('data-review-rating'));
+        setStatus('', false);
+      });
+      button.addEventListener('keydown', event => {
+        if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) {
+          return;
+        }
+        event.preventDefault();
+        const direction = event.key === 'ArrowRight' || event.key === 'ArrowUp' ? 1 : -1;
+        const nextButton = ratingButtons[
+          Math.max(0, Math.min(ratingButtons.length - 1, index + direction))
+        ];
+        if (nextButton) {
+          nextButton.focus();
+          nextButton.click();
+        }
+      });
+    });
+
+    if (imagesInput) {
+      imagesInput.addEventListener('change', () => {
+        const selectedFiles = Array.from(imagesInput.files || []);
+        const validFiles = selectedFiles.filter(file => /^image\//i.test(file.type));
+        const hasInvalidFiles = validFiles.length !== selectedFiles.length;
+
+        validFiles.forEach(file => {
+          const fileKey = [file.name, file.size, file.lastModified].join(':');
+          const isDuplicate = dialog.__productReviewFiles.some(currentFile => {
+            return [currentFile.name, currentFile.size, currentFile.lastModified].join(':') === fileKey;
+          });
+          if (!isDuplicate) {
+            dialog.__productReviewFiles.push(file);
+          }
+        });
+
+        imagesInput.value = '';
+        if (imagesError) {
+          imagesError.classList.toggle('d-none', !hasInvalidFiles);
+        }
+        renderPreviews();
+      });
+    }
+
+    if (previews) {
+      previews.addEventListener('click', event => {
+        const remove = event.target.closest('[data-review-image-remove]');
+        if (!remove) {
+          return;
+        }
+        const index = Number(remove.getAttribute('data-review-image-remove'));
+        if (index >= 0 && index < dialog.__productReviewFiles.length) {
+          dialog.__productReviewFiles.splice(index, 1);
+          renderPreviews();
+        }
+      });
+    }
+
+    form.addEventListener('submit', async event => {
+      event.preventDefault();
+      if (dialog.__productReviewSubmitting) {
+        return;
+      }
+
+      const rating = Number(ratingInput.value);
+      if (rating < 1 || rating > 5) {
+        if (ratingError) {
+          ratingError.classList.remove('d-none');
+        }
+        ratingButtons[0]?.focus();
+        return;
+      }
+
+      const productId = dialog.getAttribute('data-product-id');
+      const comment = form.elements.comment.value.trim();
+      const orderId = form.elements.order_id.value.trim();
+      const payload = {
+        rating,
+        is_anonymous: Boolean(form.elements.is_anonymous.checked),
+      };
+
+      if (comment) {
+        payload.comment = comment;
+      }
+      if (orderId) {
+        payload.order_id = orderId;
+      }
+      if (dialog.__productReviewFiles.length) {
+        payload.images = dialog.__productReviewFiles.slice();
+      }
+
+      if (!productId || !window.zid || !window.zid.products
+        || typeof window.zid.products.createReview !== 'function') {
+        const unavailableMessage = dialog.getAttribute('data-review-error');
+        setStatus(unavailableMessage, true);
+        showToast('error', unavailableMessage);
+        return;
+      }
+
+      dialog.__productReviewSubmitting = true;
+      submitButton.disabled = true;
+      submitButton.setAttribute('aria-busy', 'true');
+      progress?.classList.remove('d-none');
+      setStatus('', false);
+
+      try {
+        await window.zid.products.createReview(productId, payload);
+        const successMessage = dialog.getAttribute('data-review-success');
+        showToast('success', successMessage);
+        resetForm();
+        dialog.dispatchEvent(new CustomEvent('theme:review:created', {
+          bubbles: true,
+          detail: { productId, payload },
+        }));
+        if (window.themeDialog) {
+          window.themeDialog.close(dialog);
+        }
+      } catch (error) {
+        const errorMessage = error?.response?.data?.message
+          || error?.message
+          || dialog.getAttribute('data-review-error');
+        setStatus(errorMessage, true);
+        showToast('error', errorMessage);
+      } finally {
+        dialog.__productReviewSubmitting = false;
+        submitButton.disabled = false;
+        submitButton.removeAttribute('aria-busy');
+        progress?.classList.add('d-none');
+      }
+    });
+
+    setRating(0);
+  }
+}
+
+const productsReviews = new ProductsReviews();
 
 
 
@@ -907,13 +1228,7 @@ function updateUIAfterLogin(customer) {
     el.style.setProperty('display', 'inline-block', 'important');
   });
 
-  const addReviewLink = document.getElementById('add-review-link');
-  const addReviewBtn = document.getElementById('add-review-btn');
-
-  if (addReviewLink && addReviewBtn) {
-    addReviewLink.classList.add('d-none');
-    addReviewBtn.style.display = 'block';
-  }
+  productsReviews.setAuthenticated(true);
 
   if (typeof fetchCart === 'function') {
     fetchCart();

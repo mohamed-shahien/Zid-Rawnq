@@ -1,4 +1,4 @@
-{% set ver = '0.1.045' %}
+{% set ver = '0.1.054' %}
 <!doctype html>
 <html class="no-js" lang="{{ session.lang }}" dir="{{ session.locale.language.direction }}">
 <head>
@@ -35,14 +35,57 @@
         
     
   <link rel="shortcut icon" type="image/jpg" href={{ store.icon }}/>
-    {#<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Changa">#}
-    <!--jquery UI -->
+      {#<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Changa">#}
+
+    {# يمكنك تغيير الخط من هنا. إذا أردت العودة للخط الديناميكي الخاص بالنظام، اترك القيمة فارغة: {% set custom_font_name = '' %} #}
+    {% set custom_font_name = 'Josefin Sans' %}
+
+    {% if custom_font_name == 'Josefin Sans' %}
+    <style>
+        @font-face {
+            font-family: 'Josefin Sans';
+            src: url('{{ "static/JosefinSans-Regular.ttf" | asset_url }}') format('truetype');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Josefin Sans';
+            src: url('{{ "static/JosefinSans-Medium.ttf" | asset_url }}') format('truetype');
+            font-weight: 500;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Josefin Sans';
+            src: url('{{ "static/JosefinSans-SemiBold.ttf" | asset_url }}') format('truetype');
+            font-weight: 600;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Josefin Sans';
+            src: url('{{ "static/JosefinSans-Bold.ttf" | asset_url }}') format('truetype');
+            font-weight: 700;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Josefin Sans';
+            src: url('{{ "static/JosefinSans-Light.ttf" | asset_url }}') format('truetype');
+            font-weight: 300;
+            font-style: normal;
+            font-display: swap;
+        }
+    </style>
+    {% else %}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet"
       media="print"
       onload="this.onload=null;this.media='all'"
-      href="https://fonts.googleapis.com/css2?family={% if settings.fonts_name %}{{ settings.fonts_name }}{% else %}Changa{% endif %}:wght@300;400;500;700&display=swap">
+      href="https://fonts.googleapis.com/css2?family={% if custom_font_name %}{{ custom_font_name }}{% elif settings.fonts_name %}{{ settings.fonts_name }}{% else %}Changa{% endif %}:wght@300;400;500;600;700&display=swap">
+    {% endif %}
 
             <style>
         :root {
@@ -150,12 +193,12 @@
 >
 
 {% if store.editing_mode %}
-  <link href="https://fonts.googleapis.com/css2?family={% if settings.fonts_name %}{{ settings.fonts_name }}{% else %}Changa{% endif %}:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family={% if custom_font_name %}{{ custom_font_name }}{% elif settings.fonts_name %}{{ settings.fonts_name }}{% else %}Changa{% endif %}:wght@300;400;500;700&display=swap" rel="stylesheet">
 {% endif %}
 
 <style>
   body,html {
-    font-family: {% if settings.fonts_name %}{{ settings.fonts_name | replace('+', ' ') }}{% else %}'Changa'{% endif %}, sans-serif;
+    font-family: {% if custom_font_name %}'{{ custom_font_name | replace('+', ' ') }}'{% elif settings.fonts_name %}'{{ settings.fonts_name | replace('+', ' ') }}'{% else %}'Changa'{% endif %}, sans-serif !important;
   }
   :root {
   {% if settings is defined %}
@@ -214,6 +257,7 @@
 <script src="{{ 'swiper-bundle.min.js?v=12.2.0' | asset_url }}"></script>
 <script src="{{ 'swiper-helper.js?v=1.0.0' | asset_url }}"></script>
 
+<script type="text/javascript" src="{{ ('theme-dialog.js?v=' ~ ver) | asset_url }}" defer></script>
 <script type="text/javascript" src="{{ ('main.js?v=' ~ ver) | asset_url }}" defer></script>
 <script type="text/javascript" src="{{ ('bundle-offers.js?v=' ~ ver) | asset_url }}" defer></script>
 
