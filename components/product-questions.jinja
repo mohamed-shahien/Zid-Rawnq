@@ -51,62 +51,6 @@
       </div>
     {% endif %}
   </div>
-  
-  <script>
-    (function() {
-      var reduceMotion = window.matchMedia
-        && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-      document.querySelectorAll('.questions-luxury-card-header').forEach(function(header) {
-        if (header.__questionAccordionBound) {
-          return;
-        }
-
-        header.__questionAccordionBound = true;
-        header.addEventListener('click', handleHeaderClick);
-        header.addEventListener('keydown', function(event) {
-          if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            handleHeaderClick({ currentTarget: header });
-          }
-        });
-      });
-
-      function handleHeaderClick(e) {
-        var card = e.currentTarget.closest('.questions-luxury-card');
-        var body = card && card.querySelector('.questions-luxury-card-body');
-        if (!card || !body) {
-          return;
-        }
-
-        var shouldOpen = card.classList.contains('collapsed');
-        e.currentTarget.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
-
-        if (reduceMotion) {
-          card.classList.toggle('collapsed', !shouldOpen);
-          body.style.maxHeight = shouldOpen ? 'none' : '0px';
-          return;
-        }
-
-        body.style.maxHeight = body.scrollHeight + 'px';
-        void body.offsetHeight;
-
-        if (shouldOpen) {
-          card.classList.remove('collapsed');
-          body.style.maxHeight = body.scrollHeight + 'px';
-          body.addEventListener('transitionend', function resetOpenHeight(event) {
-            if (event.propertyName === 'max-height' && !card.classList.contains('collapsed')) {
-              body.style.maxHeight = 'none';
-              body.removeEventListener('transitionend', resetOpenHeight);
-            }
-          });
-        } else {
-          card.classList.add('collapsed');
-          body.style.maxHeight = '0px';
-        }
-      }
-    })();
-  </script>
 {% else %}
   <!-- Empty State: No Questions -->
   <div class="questions-luxury-empty-wrapper">

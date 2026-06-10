@@ -33,12 +33,12 @@
         element.classList.remove("pdp-motion");
         element.style.setProperty("--pdp-motion-y", (options.y === undefined ? 10 : options.y) + "px");
         element.style.setProperty("--pdp-motion-scale", options.scale || 0.992);
-        element.style.setProperty("--pdp-motion-time", (options.duration || 420) + "ms");
+        element.style.setProperty("--pdp-motion-time", (options.duration || 820) + "ms");
         void element.offsetWidth;
         element.classList.add("pdp-motion");
         element.__pdpMotionTimer = window.setTimeout(function () {
             element.classList.remove("pdp-motion");
-        }, (options.duration || 420) + 50);
+        }, (options.duration || 820) + 80);
     }
 
     function setVisibility(target, shouldShow, displayClass) {
@@ -54,7 +54,7 @@
                 if (displayClass) {
                     element.classList.add(displayClass);
                 }
-                motion(element, { y: 7, duration: 340 });
+                motion(element, { y: 7, duration: 760 });
                 return;
             }
 
@@ -77,7 +77,7 @@
                 { opacity: 1, transform: "translateY(0)" },
                 { opacity: 0, transform: "translateY(-6px)" }
             ], {
-                duration: 180,
+                duration: 680,
                 easing: "ease-in"
             });
             element.__pdpVisibilityAnimation.finished.then(finishHide).catch(function () {});
@@ -119,7 +119,7 @@
             if (holder) {
                 holder.classList.remove("is-loading");
             }
-            motion(image, { y: 0, scale: 1.018, duration: 360 });
+            motion(image, { y: 0, scale: 1.018, duration: 720 });
         }
 
         if (image.complete && image.naturalWidth > 0) {
@@ -154,7 +154,7 @@
             if (holder) {
                 holder.classList.remove("is-loading");
             }
-            motion(frame, { y: 0, scale: 1.01, duration: 360 });
+            motion(frame, { y: 0, scale: 1.01, duration: 720 });
         }
 
         frame.addEventListener("load", finish, { once: true });
@@ -194,7 +194,7 @@
         }
         slot.classList.remove("is-loading", "d-none");
         prepareMedia(slot);
-        motion(slot, { y: 7, duration: 360 });
+        motion(slot, { y: 7, duration: 720 });
         return true;
     }
 
@@ -251,7 +251,7 @@
                 if (!entry.isIntersecting) {
                     return;
                 }
-                motion(entry.target, { y: 14, duration: 460 });
+                motion(entry.target, { y: 14, duration: 860 });
                 observer.unobserve(entry.target);
             });
         }, {
@@ -286,7 +286,7 @@
 
             var opening = !details.open;
             summary.setAttribute("aria-expanded", opening ? "true" : "false");
-            if (reducedMotion || typeof content.animate !== "function") {
+            if (reducedMotion) {
                 details.open = opening;
                 return;
             }
@@ -297,25 +297,27 @@
             }
 
             var height = content.scrollHeight;
-            var animation = content.animate(opening ? [
-                { height: "0px", opacity: 0, transform: "translateY(-7px)" },
-                { height: height + "px", opacity: 1, transform: "translateY(0)" }
-            ] : [
-                { height: height + "px", opacity: 1, transform: "translateY(0)" },
-                { height: "0px", opacity: 0, transform: "translateY(-7px)" }
-            ], {
-                duration: opening ? 360 : 240,
-                easing: "cubic-bezier(0.22, 1, 0.36, 1)"
+            content.style.height = opening ? "0px" : height + "px";
+            content.style.opacity = opening ? "0" : "1";
+            content.style.transform = opening ? "translateY(-8px)" : "translateY(0)";
+            void content.offsetHeight;
+
+            window.requestAnimationFrame(function () {
+                content.style.height = opening ? height + "px" : "0px";
+                content.style.opacity = opening ? "1" : "0";
+                content.style.transform = opening ? "translateY(0)" : "translateY(-8px)";
             });
 
-            animation.finished.then(function () {
+            window.setTimeout(function () {
                 if (!opening) {
                     details.open = false;
+                } else {
+                    content.style.height = "auto";
                 }
+                content.style.opacity = "";
+                content.style.transform = "";
                 details.__pdpDetailsAnimating = false;
-            }).catch(function () {
-                details.__pdpDetailsAnimating = false;
-            });
+            }, opening ? 880 : 720);
         });
     }
 
@@ -395,7 +397,7 @@
         updateTabIndicator(header, trigger);
 
         if (activePane === target) {
-            motion(target, { y: 5, duration: 320 });
+            motion(target, { y: 5, duration: 680 });
             return;
         }
 
@@ -406,7 +408,7 @@
             });
             target.style.display = "block";
             target.classList.add("active");
-            motion(target, { y: 9, duration: 420 });
+            motion(target, { y: 9, duration: 820 });
         }
 
         if (!activePane || reducedMotion || typeof activePane.animate !== "function") {
@@ -418,7 +420,7 @@
             { opacity: 1, transform: "translateY(0)" },
             { opacity: 0, transform: "translateY(-6px)" }
         ], {
-            duration: 160,
+            duration: 680,
             easing: "ease-in"
         }).finished.then(showTarget).catch(showTarget);
     }
@@ -527,16 +529,515 @@
                 return;
             }
             var observer = new MutationObserver(function () {
-                motion(element, { y: 5, duration: 320 });
+                motion(element, { y: 5, duration: 680 });
             });
             observer.observe(element, { childList: true, subtree: true, characterData: true });
             element.__pdpValueObserver = observer;
         });
     }
 
+    function resolveHydration(target) {
+        toElements(target).forEach(function (element) {
+            if (!element.classList.contains("is-loading")) {
+                return;
+            }
+            element.classList.remove("is-loading");
+            motion(element, { y: 6, duration: 760 });
+        });
+    }
+
+    function initHydration(root) {
+        root.querySelectorAll("[data-pdp-hydrate]").forEach(function (element) {
+            window.setTimeout(function () {
+                resolveHydration(element);
+            }, 2600);
+        });
+    }
+
+    function initQuestionAccordions(root) {
+        root.querySelectorAll(".questions-luxury-card-header").forEach(function (header) {
+            if (header.__pdpQuestionBound) {
+                return;
+            }
+
+            header.__pdpQuestionBound = true;
+
+            function toggleQuestion() {
+                var card = header.closest(".questions-luxury-card");
+                var body = card && card.querySelector(".questions-luxury-card-body");
+                if (!card || !body || card.__pdpQuestionAnimating) {
+                    return;
+                }
+
+                var opening = card.classList.contains("collapsed");
+                header.setAttribute("aria-expanded", opening ? "true" : "false");
+                if (reducedMotion) {
+                    card.classList.toggle("collapsed", !opening);
+                    body.style.maxHeight = opening ? "none" : "0px";
+                    return;
+                }
+
+                card.__pdpQuestionAnimating = true;
+                var height = body.scrollHeight;
+                body.style.maxHeight = opening ? "0px" : height + "px";
+                void body.offsetHeight;
+
+                if (opening) {
+                    card.classList.remove("collapsed");
+                    window.requestAnimationFrame(function () {
+                        body.style.maxHeight = height + "px";
+                    });
+                } else {
+                    window.requestAnimationFrame(function () {
+                        card.classList.add("collapsed");
+                        body.style.maxHeight = "0px";
+                    });
+                }
+
+                window.setTimeout(function () {
+                    if (opening) {
+                        body.style.maxHeight = "none";
+                    }
+                    card.__pdpQuestionAnimating = false;
+                }, 880);
+            }
+
+            header.addEventListener("click", toggleQuestion);
+            header.addEventListener("keydown", function (event) {
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    toggleQuestion();
+                }
+            });
+        });
+    }
+
+    function initReviewImages(root) {
+        if (root.__pdpReviewImagesBound) {
+            return;
+        }
+        root.__pdpReviewImagesBound = true;
+        root.addEventListener("click", function (event) {
+            var image = event.target.closest(".review-luxury-image-thumb img");
+            if (!image) {
+                return;
+            }
+
+            var container = image.closest(".review-luxury-images");
+            if (!container || typeof window.openPhotoSwiper !== "function") {
+                return;
+            }
+
+            var images = Array.prototype.map.call(container.querySelectorAll("img"), function (item) {
+                return item.currentSrc || item.src;
+            });
+            var index = Math.max(0, images.indexOf(image.currentSrc || image.src));
+            window.openPhotoSwiper(images, index);
+        });
+    }
+
+    function initQuestionMessages(root) {
+        var modal = root.querySelector("#addProductQuestionModal[data-question-success]");
+        if (!modal) {
+            return;
+        }
+        window.locales_messages = {
+            success: modal.getAttribute("data-question-success") || "",
+            success_header: modal.getAttribute("data-question-success-header") || "",
+            error: modal.getAttribute("data-question-error") || ""
+        };
+    }
+
+    function initMobileCart(root) {
+        var page = root.closest(".products-details-page");
+        var cart = page && page.querySelector("[data-pdp-mobile-cart]");
+        if (!cart || cart.__pdpMobileCartBound) {
+            return;
+        }
+
+        cart.__pdpMobileCartBound = true;
+        var nativeQuantity = root.querySelector("#product-quantity");
+        var originalButton = root.querySelector(".btn-add-to-cart");
+        var productButtons = root.querySelector(".product-buttons");
+        var currentPrice = root.querySelector(".product-formatted-price");
+        var oldPrice = root.querySelector(".product-formatted-price-old");
+        var mobilePrice = cart.querySelector("[data-pdp-mobile-price]");
+        var mobileOldPrice = cart.querySelector("[data-pdp-mobile-old-price]");
+        var mobileQuantity = cart.querySelector("[data-pdp-mobile-qty]");
+        var submit = cart.querySelector("[data-pdp-mobile-submit]");
+        var minus = cart.querySelector("[data-pdp-mobile-qty-minus]");
+        var plus = cart.querySelector("[data-pdp-mobile-qty-plus]");
+        var mobileMedia = window.matchMedia
+            ? window.matchMedia("(max-width: 767.98px)")
+            : { matches: window.innerWidth < 768 };
+        var lastScrollY = window.pageYOffset || 0;
+        var scrollFrame = null;
+        var mobileCartEnabled = false;
+
+        function isAvailable() {
+            return productButtons
+                && !productButtons.classList.contains("d-none")
+                && window.getComputedStyle(productButtons).display !== "none";
+        }
+
+        function syncCart() {
+            if (mobilePrice && currentPrice) {
+                mobilePrice.textContent = currentPrice.textContent.trim();
+            }
+            if (mobileOldPrice) {
+                var oldText = oldPrice ? oldPrice.textContent.trim() : "";
+                mobileOldPrice.textContent = oldText;
+                mobileOldPrice.classList.toggle("d-none", !oldText);
+            }
+            if (mobileQuantity && nativeQuantity) {
+                mobileQuantity.textContent = nativeQuantity.value || "1";
+            }
+            if (submit && originalButton) {
+                submit.disabled = Boolean(originalButton.disabled);
+                var originalLabel = originalButton.querySelector("span");
+                var mobileLabel = submit.querySelector("span");
+                if (originalLabel && mobileLabel) {
+                    mobileLabel.textContent = originalLabel.textContent;
+                }
+            }
+            cart.classList.toggle("is-unavailable", !isAvailable());
+        }
+
+        function updateBodySpace() {
+            var enabled = mobileMedia.matches && isAvailable();
+            document.body.classList.toggle("has-pdp-mobile-cart", enabled);
+            if (!enabled) {
+                cart.classList.add("is-scroll-hidden");
+            } else if (!mobileCartEnabled) {
+                lastScrollY = window.pageYOffset || 0;
+                cart.classList.remove("is-scroll-hidden");
+            }
+            mobileCartEnabled = enabled;
+        }
+
+        function setQuantity(delta) {
+            if (!nativeQuantity || nativeQuantity.disabled) {
+                return;
+            }
+            var options = nativeQuantity.options;
+            if (!options || !options.length) {
+                return;
+            }
+            var currentIndex = nativeQuantity.selectedIndex;
+            var nextIndex = Math.max(0, Math.min(options.length - 1, currentIndex + delta));
+            if (nextIndex === currentIndex) {
+                return;
+            }
+            nativeQuantity.selectedIndex = nextIndex;
+            ["input", "change"].forEach(function (eventName) {
+                var event;
+                if (typeof window.Event === "function") {
+                    event = new Event(eventName, { bubbles: true });
+                } else {
+                    event = document.createEvent("Event");
+                    event.initEvent(eventName, true, false);
+                }
+                nativeQuantity.dispatchEvent(event);
+            });
+            syncCart();
+        }
+
+        if (minus) {
+            minus.addEventListener("click", function () {
+                setQuantity(-1);
+            });
+        }
+        if (plus) {
+            plus.addEventListener("click", function () {
+                setQuantity(1);
+            });
+        }
+        if (submit) {
+            submit.addEventListener("click", function () {
+                if (originalButton && !originalButton.disabled) {
+                    originalButton.click();
+                }
+            });
+        }
+        if (nativeQuantity) {
+            nativeQuantity.addEventListener("input", syncCart);
+            nativeQuantity.addEventListener("change", syncCart);
+        }
+
+        window.addEventListener("scroll", function () {
+            if (scrollFrame || !mobileMedia.matches) {
+                return;
+            }
+            scrollFrame = window.requestAnimationFrame(function () {
+                var currentY = Math.max(0, window.pageYOffset || document.documentElement.scrollTop || 0);
+                var delta = currentY - lastScrollY;
+                if (Math.abs(delta) >= 6) {
+                    cart.classList.toggle("is-scroll-hidden", delta > 0 && currentY > 80);
+                    lastScrollY = currentY;
+                }
+                scrollFrame = null;
+            });
+        }, { passive: true });
+
+        if (mobileMedia.addEventListener) {
+            mobileMedia.addEventListener("change", updateBodySpace);
+        } else if (mobileMedia.addListener) {
+            mobileMedia.addListener(updateBodySpace);
+        }
+
+        if (window.MutationObserver) {
+            var observer = new MutationObserver(function () {
+                syncCart();
+                updateBodySpace();
+            });
+            [productButtons, currentPrice, oldPrice, originalButton, nativeQuantity].forEach(function (element) {
+                if (element) {
+                    observer.observe(element, {
+                        attributes: true,
+                        childList: true,
+                        subtree: true,
+                        characterData: true,
+                        attributeFilter: ["class", "disabled"]
+                    });
+                }
+            });
+        }
+
+        syncCart();
+        updateBodySpace();
+        window.requestAnimationFrame(function () {
+            cart.classList.remove("is-loading", "is-scroll-hidden");
+            cart.classList.add("is-ready");
+            updateBodySpace();
+        });
+    }
+
+    function initReels(root) {
+        var reelItems = root.querySelectorAll(".reel-circle-item");
+        var modal = document.getElementById("reels-modal");
+        var video = document.getElementById("reels-video");
+        if (!reelItems.length || !modal || !video || modal.__pdpReelsBound) {
+            return;
+        }
+
+        modal.__pdpReelsBound = true;
+        var closeButton = document.getElementById("reels-close-btn");
+        var muteButton = document.getElementById("reels-mute-btn");
+        var mutedIcon = document.getElementById("icon-muted");
+        var unmutedIcon = document.getElementById("icon-unmuted");
+        var progressContainer = document.getElementById("reels-progress-container");
+        var previousButton = document.getElementById("reels-prev-btn");
+        var nextButton = document.getElementById("reels-next-btn");
+        var centerZone = document.getElementById("reels-center-zone");
+        var loader = document.getElementById("reels-loader");
+        var videos = [];
+        var progress = [];
+        var index = 0;
+        var muted = true;
+        var pausedByHold = false;
+        var holdTimer = null;
+        var closeTimer = null;
+
+        function updateMute() {
+            video.muted = muted;
+            if (mutedIcon && unmutedIcon) {
+                mutedIcon.classList.toggle("d-none", !muted);
+                unmutedIcon.classList.toggle("d-none", muted);
+            }
+        }
+
+        function toggleMute(event) {
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            muted = !muted;
+            updateMute();
+        }
+
+        function buildProgress() {
+            if (!progressContainer) {
+                return;
+            }
+            progressContainer.innerHTML = "";
+            progress = videos.map(function () {
+                var bar = document.createElement("div");
+                var fill = document.createElement("div");
+                bar.className = "reels-progress-bar";
+                fill.className = "reels-progress-fill";
+                bar.appendChild(fill);
+                progressContainer.appendChild(bar);
+                return fill;
+            });
+        }
+
+        function closeReel(event) {
+            if (event) {
+                event.stopPropagation();
+            }
+            modal.classList.add("out");
+            document.body.style.overflow = "";
+            video.pause();
+            window.clearTimeout(closeTimer);
+            closeTimer = window.setTimeout(function () {
+                modal.classList.remove("unfold", "out");
+                video.removeAttribute("src");
+                video.load();
+            }, 1000);
+        }
+
+        function playVideo(nextIndex) {
+            if (nextIndex >= videos.length) {
+                closeReel();
+                return;
+            }
+            index = Math.max(0, nextIndex);
+            progress.forEach(function (fill, progressIndex) {
+                fill.style.width = progressIndex < index ? "100%" : "0%";
+            });
+            if (loader) {
+                loader.classList.remove("d-none");
+            }
+            video.src = videos[index];
+            updateMute();
+            var playPromise = video.play();
+            if (playPromise && typeof playPromise.then === "function") {
+                playPromise.then(function () {
+                    if (loader) {
+                        loader.classList.add("d-none");
+                    }
+                }).catch(function () {
+                    if (loader) {
+                        loader.classList.add("d-none");
+                    }
+                });
+            }
+        }
+
+        function openReel(value) {
+            videos = String(value || "").split("&&").map(function (item) {
+                return item.trim();
+            }).filter(Boolean);
+            if (!videos.length) {
+                return;
+            }
+            index = 0;
+            window.clearTimeout(closeTimer);
+            document.body.style.overflow = "hidden";
+            modal.classList.remove("out");
+            modal.classList.add("unfold");
+            buildProgress();
+            playVideo(0);
+        }
+
+        function startHold(event) {
+            if (event) {
+                event.stopPropagation();
+            }
+            window.clearTimeout(holdTimer);
+            holdTimer = window.setTimeout(function () {
+                pausedByHold = true;
+                video.pause();
+            }, 220);
+        }
+
+        function endHold(event) {
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            window.clearTimeout(holdTimer);
+            if (pausedByHold) {
+                pausedByHold = false;
+                video.play();
+            } else {
+                toggleMute();
+            }
+        }
+
+        video.removeAttribute("loop");
+        video.addEventListener("timeupdate", function () {
+            if (video.duration && progress[index]) {
+                progress[index].style.width = ((video.currentTime / video.duration) * 100) + "%";
+            }
+        });
+        video.addEventListener("ended", function () {
+            playVideo(index + 1);
+        });
+        closeButton.addEventListener("click", closeReel);
+        muteButton.addEventListener("click", toggleMute);
+        previousButton.addEventListener("click", function (event) {
+            event.stopPropagation();
+            playVideo(index - 1);
+        });
+        nextButton.addEventListener("click", function (event) {
+            event.stopPropagation();
+            playVideo(index + 1);
+        });
+        centerZone.addEventListener("mousedown", startHold);
+        centerZone.addEventListener("mouseup", endHold);
+        centerZone.addEventListener("mouseleave", function () {
+            window.clearTimeout(holdTimer);
+            if (pausedByHold) {
+                pausedByHold = false;
+                video.play();
+            }
+        });
+        centerZone.addEventListener("touchstart", startHold, { passive: true });
+        centerZone.addEventListener("touchend", endHold);
+        reelItems.forEach(function (item) {
+            item.addEventListener("click", function (event) {
+                event.preventDefault();
+                openReel(item.getAttribute("data-videos"));
+            });
+        });
+    }
+
+    function initRelatedProducts(root) {
+        if (!window.themeSwiper) {
+            if (!root.__pdpRelatedProductsWaiting) {
+                root.__pdpRelatedProductsWaiting = true;
+                window.addEventListener("load", function () {
+                    root.__pdpRelatedProductsWaiting = false;
+                    initRelatedProducts(root);
+                }, { once: true });
+            }
+            return;
+        }
+
+        var page = root.closest(".products-details-page");
+        [
+            {
+                element: root.querySelector("#related-products-minimal-slider"),
+                spaceBetween: 16
+            },
+            {
+                element: page && page.querySelector("#related-products-slider"),
+                spaceBetween: 20
+            }
+        ].forEach(function (config) {
+            if (!config.element) {
+                return;
+            }
+            window.themeSwiper.init(config.element, {
+                slidesPerView: "auto",
+                spaceBetween: config.spaceBetween,
+                loop: false,
+                navigation: false,
+                pagination: false
+            });
+        });
+    }
+
     function init(root) {
         root = root || document.querySelector(ROOT_SELECTOR);
-        if (!root || root.__pdpUiReady) {
+        if (!root) {
+            return;
+        }
+
+        if (root.__pdpUiReady) {
+            prepareMedia(root);
+            root.querySelectorAll("details.accordion-minimal").forEach(bindDetails);
             return;
         }
 
@@ -548,6 +1049,13 @@
         initStickyGallery();
         initZoom(root);
         initValueObservers(root);
+        initHydration(root);
+        initQuestionAccordions(root);
+        initReviewImages(root);
+        initQuestionMessages(root);
+        initMobileCart(root);
+        initReels(root);
+        initRelatedProducts(root);
         root.querySelectorAll("details.accordion-minimal").forEach(bindDetails);
     }
 
@@ -557,7 +1065,8 @@
         setVisibility: setVisibility,
         prepareMedia: prepareMedia,
         switchTab: switchTab,
-        bindDetails: bindDetails
+        bindDetails: bindDetails,
+        resolveHydration: resolveHydration
     };
 
     if (document.readyState === "loading") {

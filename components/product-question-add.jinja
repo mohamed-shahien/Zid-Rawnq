@@ -1,4 +1,8 @@
-<div class="modal fade" id="addProductQuestionModal" tabindex="-1" role="dialog" aria-labelledby="addProductQuestionModal" aria-hidden="true">
+<div class="modal fade" id="addProductQuestionModal" tabindex="-1" role="dialog"
+  aria-labelledby="addProductQuestionModal" aria-hidden="true"
+  data-question-success="{{ _('Your question has been sent successfully. You will receive a notification if it is answered.') }}"
+  data-question-success-header="{{ _('Send Successfully') }}"
+  data-question-error="{{ _('failed to send') }}">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-comment-content">
       <div class="modal-body" style="padding: 20px">
@@ -33,7 +37,7 @@
             <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Close">{{ _("Cancel") }}</button>
             <span>&nbsp;&nbsp;</span>
             <button type="button" class="btn btn-primary btn-submit-new-question" onclick="productsQuestions.submitQuestion('{{product.id}}')">
-              <img class="add-review-progress d-none" src="{{ 'spinner.gif' | asset_url }}" width="15" height="15" />
+              <img class="add-review-progress d-none" src="{{ 'spinner.gif' | asset_url }}" width="15" height="15" loading="lazy" decoding="async" alt="" />
 {{ _("Send") }}
             </button>
           </div>
@@ -42,13 +46,3 @@
     </div>
   </div>
 </div>
-
-{% block footer_scripts %}
-  <script>
-    const locales_messages = {
-      success: '{{ _("Your question has been sent successfully. You will receive a notification if it is answered.") }}',
-      success_header: '{{ _("Send Successfully") }}',
-      error: '{{ _("failed to send") }}',
-    };
-  </script>
-{% endblock %}

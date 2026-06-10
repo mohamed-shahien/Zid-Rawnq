@@ -1,3 +1,4 @@
+<div class="simple-header-wrapper" style="height: 72px;">
 <header id="{{ sectionId }}" section-id="{{ sectionId }}" class="simple-header">
     {% include 'vitrin:shared/store_messages.jinja' %}
     <div class="container h-100">
@@ -15,7 +16,7 @@
             </div>
 
             <!-- Navigation Menu (Middle) -->
-            <div class="header-nav d-none d-lg-flex justify-content-center" style="flex: 2; gap: 32px;">
+            <div class="header-nav d-none d-lg-flex justify-content-center" style="flex: 2; gap: 20px;">
                 {% set max_items = 4 %}
                 {% for menu in store.settings.menus.main_menu.items %}
                     {% if loop.index0 < max_items %}
@@ -26,8 +27,9 @@
                 {% endfor %}
                 
                 {% if store.settings.menus.main_menu.items | length > max_items %}
-                    <button class="nav-link btn-more-menu text-uppercase" style="color: #333; font-weight: 500; font-size: 13px; text-decoration: none; letter-spacing: 0.5px; border: none; background: transparent; cursor: pointer; padding: 0;" onclick="toggleMoreMenu()">
+                    <button class="nav-link btn-more-menu text-uppercase d-flex align-items-center" style="color: #333; font-weight: 500; font-size: 13px; text-decoration: none; letter-spacing: 0.5px; border: none; background: transparent; cursor: pointer; padding: 0;" onclick="toggleMoreMenu()">
                         {{ _("More") }}
+                        <svg class="more-arrow" style="margin-inline-start: 4px; transition: transform 0.3s ease;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
                     </button>
                 {% endif %}
             </div>
@@ -70,7 +72,7 @@
     <!-- More Menu Panel (Qima style offcanvas) -->
     <div id="more-menu-panel" class="offcanvas-menu" style="display: none; position: fixed; top: 0; right: 0; bottom: 0; width: 350px; max-width: 100vw; background: #fff; z-index: 1050; box-shadow: -5px 0 15px rgba(0,0,0,0.05); transform: translateX(100%); transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);">
         <div class="offcanvas-header d-flex justify-content-between align-items-center" style="padding: 24px; border-bottom: 1px solid #f5f5f5;">
-            <h5 class="m-0 text-uppercase" style="font-weight: 500; font-size: 14px; letter-spacing: 0.5px; color: #333;">{{ _("Menu") }}</h5>
+            <h5 class="m-0 text-uppercase" style="font-weight: 500; font-size: 14px; letter-spacing: 0.5px; color: #333;">{{ _("Categories") }}</h5>
             <button onclick="toggleMoreMenu()" style="border: none; background: transparent; cursor: pointer; color: #333; padding: 0;">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
@@ -79,18 +81,74 @@
             <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 20px;">
                 {% for menu in store.settings.menus.main_menu.items %}
                     <li style="border-bottom: 1px solid #f9f9f9; padding-bottom: 12px;">
-                        <a href="{{ menu.url }}" style="color: #333; font-size: 15px; font-weight: 500; text-decoration: none; display: block;">{{ menu.label }}</a>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="{{ menu.url }}" class="d-flex align-items-center" style="color: #333; font-size: 15px; font-weight: 500; text-decoration: none; flex: 1;">
+                                {% if menu.image or menu.icon %}
+                                    <img src="{{ menu.image or menu.icon }}" alt="{{ menu.label }}" style="width: 24px; height: 24px; object-fit: cover; border-radius: 4px; margin-inline-end: 12px;">
+                                {% else %}
+                                    <div style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; background: #f5f5f5; border-radius: 4px; margin-inline-end: 12px;">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                                    </div>
+                                {% endif %}
+                                <span>{{ menu.label }}</span>
+                            </a>
+                            
+                            {% if menu.items | length > 0 %}
+                                <button class="btn-toggle-sub" onclick="toggleSubCategory('sub-{{ loop.index0 }}', this)" aria-label="Toggle Subcategories" style="border: none; background: transparent; padding: 4px 8px; cursor: pointer; color: #888;">
+                                    <svg class="sub-arrow" style="transition: transform 0.3s ease;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                                </button>
+                            {% endif %}
+                        </div>
+                        
                         {% if menu.items | length > 0 %}
-                            <ul style="list-style: none; padding-inline-start: 16px; margin-top: 16px; display: flex; flex-direction: column; gap: 14px;">
-                                {% for sub in menu.items %}
-                                    <li><a href="{{ sub.url }}" style="color: #666; font-size: 14px; text-decoration: none; display: block;">{{ sub.label }}</a></li>
-                                {% endfor %}
-                            </ul>
+                            <div id="sub-{{ loop.index0 }}" class="sub-category-container" style="display: none; padding-inline-start: 36px; margin-top: 12px;">
+                                <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px;">
+                                    {% for sub in menu.items %}
+                                        <li>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <a href="{{ sub.url }}" class="d-flex align-items-center" style="color: #666; font-size: 14px; text-decoration: none; flex: 1;">
+                                                    {% if sub.image or sub.icon %}
+                                                        <img src="{{ sub.image or sub.icon }}" alt="{{ sub.label }}" style="width: 20px; height: 20px; object-fit: cover; border-radius: 4px; margin-inline-end: 10px;">
+                                                    {% else %}
+                                                        <div style="width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; background: #f5f5f5; border-radius: 4px; margin-inline-end: 10px;">
+                                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                                                        </div>
+                                                    {% endif %}
+                                                    {{ sub.label }}
+                                                </a>
+                                                {% if sub.items | length > 0 %}
+                                                    <button class="btn-toggle-sub" onclick="toggleSubCategory('sub-sub-{{ loop.parent.loop.index0 }}-{{ loop.index0 }}', this)" aria-label="Toggle Subcategories" style="border: none; background: transparent; padding: 2px 6px; cursor: pointer; color: #aaa;">
+                                                        <svg class="sub-arrow" style="transition: transform 0.3s ease;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                                                    </button>
+                                                {% endif %}
+                                            </div>
+                                            {% if sub.items | length > 0 %}
+                                                <div id="sub-sub-{{ loop.parent.loop.index0 }}-{{ loop.index0 }}" class="sub-category-container" style="display: none; padding-inline-start: 30px; margin-top: 10px;">
+                                                    <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px;">
+                                                        {% for subTwo in sub.items %}
+                                                            <li>
+                                                                <a href="{{ subTwo.url }}" class="d-flex align-items-center" style="color: #888; font-size: 13px; text-decoration: none;">
+                                                                    {{ subTwo.label }}
+                                                                </a>
+                                                            </li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                </div>
+                                            {% endif %}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
                         {% endif %}
                     </li>
                 {% endfor %}
-                <li style="border-bottom: 1px solid #f9f9f9; padding-bottom: 12px;">
-                    <a href="/shipping-and-payment" style="color: #333; font-size: 15px; font-weight: 500; text-decoration: none; display: block;">{{ _("Payment and delivery options") }}</a>
+                
+                <!-- Additional default links -->
+                <li style="border-bottom: 1px solid #f9f9f9; padding-bottom: 12px; margin-top: 8px;">
+                    <a href="/shipping-and-payment" class="d-flex align-items-center" style="color: #333; font-size: 15px; font-weight: 500; text-decoration: none;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-inline-end: 12px;"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                        {{ _("Payment and delivery options") }}
+                    </a>
                 </li>
             </ul>
         </div>
@@ -112,14 +170,19 @@
         </div>
     </div>
 </header>
+</div>
 
 <style>
     .simple-header {
         height: 72px;
         background: #fdfdfd;
         border-bottom: 1px solid #eaeaea;
-        position: relative;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
         z-index: 1000;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.03);
     }
     
     .simple-header .nav-link {
@@ -129,12 +192,22 @@
         color: #000;
         opacity: 0.7;
     }
+    
+    .simple-header .btn-more-menu:hover .more-arrow {
+        transform: translateY(3px);
+    }
+    
     .simple-header .icon-btn {
         transition: transform 0.2s ease, opacity 0.2s ease;
     }
     .simple-header .icon-btn:hover {
         opacity: 0.7;
         transform: translateY(-1px);
+    }
+    
+    /* Responsive Arrow flipper for RTL */
+    html[dir="rtl"] .breadcrumb-arrow svg {
+        transform: scaleX(-1);
     }
     
     html[dir="rtl"] #more-menu-panel {
@@ -175,6 +248,20 @@
             panel.classList.add('show');
             overlay.style.opacity = '1';
             document.body.classList.add('panel-open');
+        }
+    }
+    
+    function toggleSubCategory(id, btn) {
+        const container = document.getElementById(id);
+        const isHidden = container.style.display === 'none';
+        const arrow = btn.querySelector('.sub-arrow');
+        
+        if (isHidden) {
+            container.style.display = 'block';
+            arrow.style.transform = 'rotate(180deg)';
+        } else {
+            container.style.display = 'none';
+            arrow.style.transform = 'rotate(0deg)';
         }
     }
     

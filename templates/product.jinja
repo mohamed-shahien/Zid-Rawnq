@@ -26,17 +26,22 @@
 
 <section class="product products-details-page" data-has-preorder="{{ 'true' if has_preorder else 'false' }}"
     data-can-preorder="{{ 'true' if can_preorder else 'false' }}"
-    data-stock-behavior="{{ preorder_stock_behavior or '' }}">
+    data-stock-behavior="{{ preorder_stock_behavior or '' }}"
+    data-mobile-sticky-cart="{{ 'true' if settings.product_page_sticky_add_to_cart else 'false' }}">
     <div class="luxury-product-page pb-5 container" style="max-width: 1400px !important; margin-left: auto !important; margin-right: auto !important; padding-left: 1.5rem !important; padding-right: 1.5rem !important;">
         {% if product.categories and product.categories | length > 0 %}
         <div class="breadcrumb-minimal d-flex align-items-center mt-3">
-            <a href="{{ store.home_url }}">{{ _('Home') }}</a>
+            <a href="{{ store.home_url }}" class="text-muted" style="text-decoration: none;">{{ _('Home') }}</a>
             {% for cat in product.categories %}
-            <span class="mx-2 text-muted">/</span>
-            <a href="{{ cat.url }}">{{ cat.name }}</a>
+            <span class="mx-2 text-muted breadcrumb-arrow">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+            </span>
+            <a href="{{ cat.url }}" class="text-muted" style="text-decoration: none;">{{ cat.name }}</a>
             {% endfor %}
-            <span class="mx-2 text-muted">/</span>
-            <span class="text-muted">{{ product.name }}</span>
+            <span class="mx-2 text-muted breadcrumb-arrow">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+            </span>
+            <span class="text-dark font-weight-500">{{ product.name }}</span>
         </div>
         {% endif %}
         <section class="products-details mb-5">
@@ -75,6 +80,7 @@
                                                                         <img id="main-video-icon" class="play-icon"
                                                                             src="{{ 'video-play.svg' | asset_url }}"
                                                                             alt="play" width="25"
+                                                                            loading="lazy" decoding="async"
                                                                             onClick="showIframe(this, '{{ image.link }}')" />
                                                                         {% endif %}
                                                                     </a>
@@ -121,7 +127,8 @@
                                                             {% if image.provider and image.link %}
                                                             <img id="video-play-icon" class="play-icon"
                                                                 src="{{ 'video-play.svg' | asset_url }}" alt="play"
-                                                                data-index="{{ loop.index0 }}" />
+                                                                data-index="{{ loop.index0 }}" loading="lazy"
+                                                                decoding="async" />
                                                             {% endif %}
                                                         </a>
                                                     </div>
@@ -152,9 +159,9 @@
                         style="display: flex; flex-direction: column; gap: 16px;">
 
                         {# 1. Product name and price #}
-                        <div class="pdp-title-price-row d-flex justify-content-between align-items-start" style="gap: 16px;">
+                        <div class="pdp-title-price-row pdp-order-title d-flex justify-content-between align-items-start" style="gap: 16px;">
                             <div>
-                                <h1 style="font-size: 28px; font-weight: 600; line-height: 1.2;">{{ product.name | safe }}</h1>
+                                <h1 class="mb-0" style="font-size: 28px; font-weight: 600; line-height: 1.2;">{{ product.name | safe }}</h1>
                             </div>
                             <div class="pdp-price-row d-flex align-items-center" style="gap: 8px; flex-shrink: 0;">
                                 <h2 class="product-formatted-price theme-text-primary m-0" style="font-size: 28px; font-weight: 600; line-height: 1;">{%
@@ -171,7 +178,7 @@
 
                         {# 2. Short description #}
                         {% if product.short_description %}
-                        <div class="text-short-description text-muted" style="font-size: 14px; font-weight: 300; line-height: 1.6;">
+                        <div class="text-short-description pdp-order-short-description text-muted" style="font-size: 14px; font-weight: 300; line-height: 1.6;">
                             {{ product.short_description | safe }}
                         </div>
                         {% endif %}
@@ -179,17 +186,17 @@
 
 
                         {# 4. Payment widgets #}
-                        <div class="payment-widgets-minimal pdp-async is-loading"
+                        <div class="payment-widgets-minimal pdp-order-payment pdp-async is-loading"
                             data-pdp-async-slot data-pdp-empty-timeout="1800"
                             style="--pdp-skeleton-height: 64px;">{% include 'vitrin:products/payment_widgets.jinja' %}</div>
 
                         {# 5. Loyalty points #}
-                        <div class="loyalty-widget-minimal pdp-async is-loading"
+                        <div class="loyalty-widget-minimal pdp-order-loyalty pdp-async is-loading"
                             data-loyalty-widget data-pdp-async-slot data-pdp-empty-timeout="1800"
                             style="--pdp-skeleton-height: 90px;">{% include 'vitrin:products/loyalty_points_widget.jinja' %}</div>
 
                         {# 3. Reviews, Weight, SKU and Stock Quantity Summary #}
-                        <div class="product-metadata-summary-container" style="display: flex; flex-direction: column; gap: 10px;">
+                        <div class="product-metadata-summary-container pdp-order-rating" style="display: flex; flex-direction: column; gap: 10px;">
                             <!-- Row 1: Rating Stars (Left) & Weight (Right) -->
                             <div class="d-flex align-items-center justify-content-between" style="gap: 16px;">
                                 <div class="product-rating-summary">
@@ -234,7 +241,7 @@
                         </div>
                         {# 6. Product description intro stays open; headed sections move below purchase controls. #}
                         {% if product.description %}
-                        <section id="product-description">
+                        <section id="product-description" class="pdp-order-description">
                             <div data-product-description-source class="description-text-clear">
                                 {% autoescape false %}
                                 {{ product.description }}
@@ -246,73 +253,35 @@
 
                         {# 7. Product metadata #}
                         {% if product.metafields %}
-                        <section id="product-metafields">
+                        <section id="product-metafields" class="pdp-order-metafields">
                             {% set entity = product %}
                             {% include 'vitrin:shared/metafields.jinja' %}
                         </section>
                         {% endif %}
 
-                        <form id="product-form" style="display: flex; flex-direction: column; gap: var(--spacing-md);">
+                        <form id="product-form" style="display: flex; flex-direction: column; gap: var(--spacing-sm);">
                             <input id="product-id" type="hidden" value="{{ product.selected_product.id }}">
 
                             {# 8. Product options #}
                             {% if product.has_variants %}
-                            <div class="size-box">
+                            <div class="size-box pdp-order-options pdp-hydrate is-loading" data-pdp-hydrate>
                                 {% include 'vitrin:products/variants_list.jinja' %}
                             </div>
                             {% endif %}
 
                             {# 9. Custom input fields #}
                             {% if product.custom_input_fields %}
-                            <div class="product-custom-input-fields">
+                            <div class="product-custom-input-fields pdp-order-custom-fields">
                                 {% include 'vitrin:products/custom_input_fields.jinja' %}
                             </div>
                             {% endif %}
 
-                            {# 10. Related products #}
-                            {% if (product.related_products | length) > 0 %}
-                            <div class="related-products-minimal mt-4 mb-3">
-                                <h4 class="text-uppercase mb-3" style="font-size: 14px; letter-spacing: 1px; font-weight: 600; color: #000000;">{{ _("You may also like") }}</h4>
-                                <div class="swiper theme-swiper-shell" id="related-products-minimal-slider" style="overflow: hidden; width: 100%;">
-                                    <div class="swiper-wrapper">
-                                        {% for rProduct in product.related_products %}
-                                        <div class="swiper-slide" style="width: 290px; margin-inline-end: 16px;">
-                                            <div class="related-product-card d-flex" style="background: #ffffff; padding: 12px; border: 1px solid #eaeaea; gap: 12px; height: 100%;">
-                                                <div class="related-product-img-wrapper" style="width: 80px; height: 90px; flex-shrink: 0; overflow: hidden; background: #fafafa;">
-                                                    <a href="{{ rProduct.url }}">
-                                                        <img src="{{ rProduct.selected_product.media[0].image.medium if rProduct.selected_product.media else ('product-img.svg'|asset_url) }}" class="w-100 h-100" style="object-fit: cover;" width="80" height="90" loading="lazy" decoding="async" alt="{{ rProduct.name }}">
-                                                    </a>
-                                                </div>
-                                                <div class="d-flex flex-column justify-content-between flex-grow-1">
-                                                    <div>
-                                                        <a href="{{ rProduct.url }}" style="color: #000; text-decoration: none;">
-                                                            <h5 class="m-0" style="font-size: 13px; font-weight: 500; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{ rProduct.name }}</h5>
-                                                        </a>
-                                                        <div class="d-flex align-items-center mt-2" style="gap: 8px;">
-                                                            <span style="font-size: 13px; font-weight: 600; color: #000;">
-                                                                {% if rProduct.selected_product.formatted_sale_price %}{{ rProduct.selected_product.formatted_sale_price }}{% else %}{{ rProduct.selected_product.formatted_price }}{% endif %}
-                                                            </span>
-                                                            {% if rProduct.selected_product.formatted_sale_price %}
-                                                            <del style="font-size: 11px; color: #999;">{{ rProduct.selected_product.formatted_price }}</del>
-                                                            {% endif %}
-                                                        </div>
-                                                    </div>
-                                                    <button type="button" class="btn btn-dark btn-sm mt-2 btn-related-add" onclick="window.location.href='{{ rProduct.url }}'" style="font-size: 12px; border-radius: 0; background: #000; border: none; padding: 6px 12px; width: 100%;">
-                                                        {{ _("Buy now") }}
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                            </div>
-                            {% endif %}
+
 
                             {# 11. Purchase controls, or stock alert email when unavailable #}
-                            <div class="product-buttons {% if can_buy %}d-block{% else %}d-none{% endif %}">
+                            <div class="product-buttons pdp-order-purchase {% if can_buy %}d-block{% else %}d-none{% endif %}">
                                 <div class="select-quantity-div">
-                                    <div class="d-flex align-items-stretch mt-3" style="gap: var(--spacing-md); height: 48px;">
+                                    <div class="d-flex align-items-stretch mt-3" style="gap: var(--spacing-sm); height: 48px;">
                                         <div class="quantity-stepper-container d-flex align-items-center"
                                             style="flex: 0 0 auto; height: 100%; margin: 0; border-radius: var(--border-radius-none);">
                                             <button type="button" class="btn-qty btn-qty-minus h-100 px-3" aria-label="Decrease quantity">
@@ -337,7 +306,7 @@
                                             type="button" onclick="productAddToCart()"
                                             style="font-size: var(--font-size-sm); letter-spacing: 1px; font-weight: 500; border-radius: var(--border-radius-none); background: black;">
                                             <img class="add-to-cart-progress d-none" src="{{ 'spinner.gif' | asset_url }}"
-                                                width="20" height="20" />
+                                                width="20" height="20" loading="lazy" decoding="async" />
                                             <span>{% if product.preorder_campaign %}{{ _("Preorder now") }}{% else %}{{ _("add to cart") }}{% endif %}</span>
                                         </button>
                                     </div>
@@ -378,7 +347,7 @@
                                 {% endfor %}
 
                                 {% if matching_reels|length > 0 %}
-                                <div class="product-reels-section mt-4 mb-4">
+                                <div class="product-reels-section pdp-order-reels">
                                     <h5 class="reels-title mb-3" style="font-size: var(--font-size-sm); font-weight: 600;">
                                         {% set title_text = _("See it in action") %}
                                         {% if settings.product_page_reels_title_link %}
@@ -400,7 +369,7 @@
                                 {% endif %}
                             {% endif %}
 
-                            <div class="section-out-of-stock-notify-me {% if not can_buy %}d-block{% else %}d-none{% endif %} mt-3">
+                            <div class="section-out-of-stock-notify-me pdp-order-notify {% if not can_buy %}d-block{% else %}d-none{% endif %}">
                                 <p class="not-available-title mb-2">
                                     {% if session.lang == 'ar' %}المنتج غير متوفر حالياً{% else %}The product is currently not available{% endif %}
                                 </p>
@@ -413,7 +382,7 @@
                                         <input class="form-control send-notify-email notify-email-input" type="email" value=""
                                             placeholder="{% if session.lang == 'ar' %}أدخل بريدك الإلكتروني{% else %}Enter your email{% endif %}" />
                                         <button type="button" class="btn btn-dark btn-send-notify" onclick="sendProductNotifyMe()">
-                                            <img class="send-notify-progress d-none" src="{{ 'spinner.gif' | asset_url }}" width="15" height="15" />
+                                            <img class="send-notify-progress d-none" src="{{ 'spinner.gif' | asset_url }}" width="15" height="15" loading="lazy" decoding="async" />
                                             <span>{% if session.lang == 'ar' %}إرسال{% else %}send{% endif %}</span>
                                         </button>
                                     </div>
@@ -421,7 +390,7 @@
                             </div>
 
                             {% if product.description %}
-                            <div data-product-description-collapses class="product-description-collapses mt-3" hidden></div>
+                            <div data-product-description-collapses class="product-description-collapses pdp-order-collapses" hidden></div>
                             {% endif %}
 
                         </form>
@@ -561,6 +530,52 @@
         {% endif %}
 
     </div>
+
+    {% if product.related_products and product.related_products | length > 0 %}
+    <section class="related-products-section pb-5 container" style="max-width: 1400px !important; margin-left: auto !important; margin-right: auto !important; padding-left: 1.5rem !important; padding-right: 1.5rem !important;">
+        <h3 class="text-uppercase mb-4 text-center" style="font-weight: 600; font-size: 24px; color: #000;">{{ _("You may also like") }}</h3>
+        <div class="swiper theme-swiper-shell" id="related-products-slider" style="overflow: hidden; width: 100%;">
+            <div class="swiper-wrapper">
+                {% for rProduct in product.related_products %}
+                <div class="swiper-slide" style="width: 280px; margin-inline-end: 20px;">
+                    {% with product = rProduct %}
+                        {% include 'components/product-card.jinja' %}
+                    {% endwith %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    {% if settings.product_page_sticky_add_to_cart %}
+    <div class="pdp-mobile-cart is-loading" data-pdp-mobile-cart aria-label="{{ _('add to cart') }}">
+        <div class="pdp-mobile-cart-price">
+            <span class="pdp-mobile-cart-price-current" data-pdp-mobile-price>
+                {% if product.selected_product.formatted_sale_price %}
+                {{ product.selected_product.formatted_sale_price }}
+                {% else %}
+                {{ product.selected_product.formatted_price }}
+                {% endif %}
+            </span>
+            {% if product.selected_product.formatted_sale_price %}
+            <del class="pdp-mobile-cart-price-old" data-pdp-mobile-old-price>
+                {{ product.selected_product.formatted_price }}
+            </del>
+            {% else %}
+            <del class="pdp-mobile-cart-price-old d-none" data-pdp-mobile-old-price></del>
+            {% endif %}
+        </div>
+        <div class="pdp-mobile-cart-quantity" aria-label="Quantity">
+            <button type="button" data-pdp-mobile-qty-minus aria-label="Decrease quantity">-</button>
+            <span data-pdp-mobile-qty>1</span>
+            <button type="button" data-pdp-mobile-qty-plus aria-label="Increase quantity">+</button>
+        </div>
+        <button type="button" class="pdp-mobile-cart-submit" data-pdp-mobile-submit>
+            <span>{% if product.preorder_campaign %}{{ _("Preorder now") }}{% else %}{{ _("add to cart") }}{% endif %}</span>
+        </button>
+    </div>
+    {% endif %}
 
     {% if product.bundle_offer and product.bundle_offer.products.results | length > 5 %}
     <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
@@ -858,6 +873,8 @@
             trigger.setAttribute('aria-label', image.alt);
             trigger.appendChild(image);
         });
+
+        preparePdpImages(optionsRoot);
     }
 
     function initProductDescriptionCollapses() {
@@ -964,7 +981,7 @@
     function animatePdpValue(element) {
         var ui = getProductPageUI();
         if (ui) {
-            ui.motion(element, { y: 5, duration: 320 });
+            ui.motion(element, { y: 5, duration: 680 });
         }
     }
 
@@ -1066,6 +1083,9 @@
     cleanProductMetafieldLabels();
     initProductDescriptionCollapses();
     initPdpMotionSystem();
+    if (getProductPageUI()) {
+        getProductPageUI().resolveHydration('.size-box');
+    }
 
     // Sync custom quantity stepper with real native input.
     const qtyNative = document.getElementById('product-quantity');
@@ -1520,7 +1540,7 @@
                     '<img src="' + prFullImage + '" class="carousel-img" loading="' + (z === 0 ? 'eager' : 'lazy') + '" decoding="async" fetchpriority="' + (z === 0 ? 'high' : 'low') + '" alt="' + (selected_product && selected_product.name ? selected_product.name : '') + '">';
 
                 if (prImage.provider && prImage.link) {
-                    imageHtml += '<img id="main-video-icon" class="play-icon" src="{{ "video-play.svg" | asset_url }}" alt="play" onclick="showIframe(this, \'' + prImage.link.replace(/'/g, '\\\'') + '\')"/>';
+                    imageHtml += '<img id="main-video-icon" class="play-icon" src="{{ "video-play.svg" | asset_url }}" alt="play" loading="lazy" decoding="async" onclick="showIframe(this, \'' + prImage.link.replace(/'/g, '\\\'') + '\')"/>';
                 }
 
                 imageHtml += '</a>' +
@@ -1544,7 +1564,7 @@
                     '<img src="' + prThumbImage + '" data-index="' + z + '" loading="lazy" decoding="async">';
 
                 if (prImage.provider && prImage.link) {
-                    thumbHtml += '<img id="video-play-icon" class="play-icon" src="{{ "video-play.svg" | asset_url }}" alt="play" data-index="' + z + '">';
+                    thumbHtml += '<img id="video-play-icon" class="play-icon" src="{{ "video-play.svg" | asset_url }}" alt="play" data-index="' + z + '" loading="lazy" decoding="async">';
                 }
 
                 thumbHtml += '</a>' +
@@ -1584,7 +1604,7 @@
         if (targetElement.length) {
             $('html, body').animate({
                 scrollTop: targetElement.offset().top - scrollOffset
-            }, 500);
+            }, 820);
         }
     });
 
@@ -2029,12 +2049,12 @@
                     { opacity: 0.35, transform: 'rotate(90deg) scale(0.7)' },
                     { opacity: 1, transform: 'rotate(180deg) scale(1)' }
                 ], {
-                    duration: 360,
+                    duration: 760,
                     easing: 'cubic-bezier(0.22, 1, 0.36, 1)'
                 });
             }
 
-            $target.stop(true, true).slideToggle(380, function () {
+            $target.stop(true, true).slideToggle(820, function () {
                 $icon.text(willOpen ? '-' : '+');
                 $icon.toggleClass('is-open', willOpen);
             });
@@ -2128,7 +2148,7 @@
             </button>
             <div class="reels-progress-container" id="reels-progress-container"></div>
             <div class="reels-video-container">
-                <video id="reels-video" playsinline webkit-playsinline muted loop></video>
+                <video id="reels-video" playsinline webkit-playsinline muted preload="none"></video>
                 
                 <button type="button" class="reels-nav-btn prev" id="reels-prev-btn" aria-label="Previous">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
@@ -2140,241 +2160,11 @@
                 <div class="reels-nav-zone center-zone" id="reels-center-zone"></div>
 
                 <div class="reels-loader d-none" id="reels-loader">
-                    <img src="{{ 'spinner.gif' | asset_url }}" width="30" height="30" />
+                    <img src="{{ 'spinner.gif' | asset_url }}" width="30" height="30" loading="lazy" decoding="async" alt="" />
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<script>
-    (function() {
-        function initReels() {
-            var reelItems = document.querySelectorAll('.reel-circle-item');
-            if (!reelItems.length) return;
-
-            var modal = document.getElementById('reels-modal');
-            var video = document.getElementById('reels-video');
-            var closeBtn = document.getElementById('reels-close-btn');
-            var muteBtn = document.getElementById('reels-mute-btn');
-            var iconMuted = document.getElementById('icon-muted');
-            var iconUnmuted = document.getElementById('icon-unmuted');
-            var progressContainer = document.getElementById('reels-progress-container');
-            
-            var prevBtn = document.getElementById('reels-prev-btn');
-            var nextBtn = document.getElementById('reels-next-btn');
-            var centerZone = document.getElementById('reels-center-zone');
-            
-            var loader = document.getElementById('reels-loader');
-
-            var currentVideos = [];
-            var currentIndex = 0;
-            var isPaused = false;
-            var isMuted = true;
-            var holdTimer;
-            var progressElements = [];
-            var closeTimeout;
-
-            function updateMuteIcon() {
-                if (isMuted) {
-                    iconMuted.classList.remove('d-none');
-                    iconUnmuted.classList.add('d-none');
-                    video.muted = true;
-                } else {
-                    iconMuted.classList.add('d-none');
-                    iconUnmuted.classList.remove('d-none');
-                    video.muted = false;
-                }
-            }
-
-            function toggleMute(e) {
-                if(e) {
-                    e.stopPropagation();
-                    e.preventDefault();
-                }
-                isMuted = !isMuted;
-                updateMuteIcon();
-            }
-
-            function openReel(videosStr) {
-                currentVideos = videosStr.split('&&').map(function(v) { return v.trim(); }).filter(function(v) { return v; });
-                if (!currentVideos.length) return;
-                
-                currentIndex = 0;
-                document.body.style.overflow = 'hidden';
-                
-                modal.classList.remove('out');
-                modal.classList.add('unfold');
-                
-                buildProgressBars();
-                playVideo(currentIndex);
-            }
-
-            function closeReel(e) {
-                if(e) e.stopPropagation();
-                modal.classList.add('out');
-                document.body.style.overflow = '';
-                video.pause();
-                
-                closeTimeout = setTimeout(function() {
-                    modal.classList.remove('unfold');
-                    modal.classList.remove('out');
-                    video.src = '';
-                }, 1000); // Wait for UnfoldOut animation
-            }
-
-            function buildProgressBars() {
-                progressContainer.innerHTML = '';
-                progressElements = [];
-                for (var i = 0; i < currentVideos.length; i++) {
-                    var bar = document.createElement('div');
-                    bar.className = 'reels-progress-bar';
-                    var fill = document.createElement('div');
-                    fill.className = 'reels-progress-fill';
-                    bar.appendChild(fill);
-                    progressContainer.appendChild(bar);
-                    progressElements.push(fill);
-                }
-            }
-
-            function playVideo(index) {
-                if (index >= currentVideos.length) {
-                    closeReel();
-                    return;
-                }
-                if (index < 0) {
-                    index = 0;
-                    currentIndex = 0;
-                }
-
-                for (var i = 0; i < progressElements.length; i++) {
-                    progressElements[i].style.width = i < index ? '100%' : '0%';
-                }
-
-                loader.classList.remove('d-none');
-                video.src = currentVideos[index];
-                
-                // Keep mute state synced
-                updateMuteIcon();
-
-                video.play().then(function() {
-                    loader.classList.add('d-none');
-                }).catch(function(e) {
-                    console.error("Video play failed", e);
-                    loader.classList.add('d-none');
-                });
-            }
-
-            video.addEventListener('timeupdate', function() {
-                if (!video.duration) return;
-                var percentage = (video.currentTime / video.duration) * 100;
-                if (progressElements[currentIndex]) {
-                    progressElements[currentIndex].style.width = percentage + '%';
-                }
-            });
-
-            // Note: Since we have loop=true? No wait, video loop attr means it repeats the same video.
-            // If the user wants to loop to next video automatically, we should NOT use the video loop attribute.
-            // But if he wants the video to loop itself... Let's auto advance to next reel.
-            video.removeAttribute('loop');
-            video.addEventListener('ended', function() {
-                currentIndex++;
-                playVideo(currentIndex);
-            });
-
-            function pauseVideo() {
-                isPaused = true;
-                video.pause();
-            }
-            function resumeVideo() {
-                if (isPaused) {
-                    isPaused = false;
-                    video.play();
-                }
-            }
-
-            // Next / Prev Button interactions
-            prevBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                currentIndex--;
-                playVideo(currentIndex);
-            });
-
-            nextBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                currentIndex++;
-                playVideo(currentIndex);
-            });
-
-            // Center Zone click/hold for Pause/Resume
-            centerZone.addEventListener('mousedown', function(e) {
-                e.stopPropagation();
-                holdTimer = setTimeout(pauseVideo, 200);
-            });
-            centerZone.addEventListener('mouseup', function(e) {
-                e.stopPropagation();
-                clearTimeout(holdTimer);
-                if (isPaused) {
-                    resumeVideo();
-                } else {
-                    // Click on center toggles mute or does nothing.
-                    // We let it toggle mute since standard tiktok behavior.
-                    toggleMute();
-                }
-            });
-            centerZone.addEventListener('mouseleave', function() {
-                clearTimeout(holdTimer);
-                resumeVideo();
-            });
-            
-            // Touch support
-            centerZone.addEventListener('touchstart', function(e) {
-                holdTimer = setTimeout(pauseVideo, 200);
-            });
-            centerZone.addEventListener('touchend', function(e) {
-                clearTimeout(holdTimer);
-                if (isPaused) {
-                    resumeVideo();
-                    e.preventDefault();
-                } else {
-                    toggleMute();
-                    e.preventDefault();
-                }
-            });
-
-            closeBtn.addEventListener('click', closeReel);
-            muteBtn.addEventListener('click', toggleMute);
-
-            reelItems.forEach(function(item) {
-                item.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    clearTimeout(closeTimeout);
-                    openReel(item.getAttribute('data-videos'));
-                });
-            });
-        }
-
-        function initRelatedProductsSwiper() {
-            var relatedSlider = document.getElementById('related-products-minimal-slider');
-            if (relatedSlider && window.themeSwiper) {
-                window.themeSwiper.init(relatedSlider, {
-                    slidesPerView: 'auto',
-                    spaceBetween: 16,
-                    loop: false,
-                    navigation: false,
-                    pagination: false
-                });
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            initRelatedProductsSwiper();
-            initReels();
-        });
-
-        window.addEventListener('load', function() {
-            initRelatedProductsSwiper();
-        });
-    })();
-</script>
 {% endblock %}

@@ -344,6 +344,14 @@
       },
       "settings": [
         {
+          "id": "sticky_add_to_cart",
+          "type": "checkbox",
+          "label": {
+            "ar": "\u062a\u062b\u0628\u064a\u062a \u0634\u0631\u064a\u0637 \u0627\u0644\u0634\u0631\u0627\u0621 \u0623\u0633\u0641\u0644 \u0634\u0627\u0634\u0629 \u0627\u0644\u0645\u0648\u0628\u0627\u064a\u0644",
+            "en": "Sticky mobile add-to-cart bar"
+          }
+        },
+        {
           "id": "reels_title_link",
           "type": "url",
           "label": {
