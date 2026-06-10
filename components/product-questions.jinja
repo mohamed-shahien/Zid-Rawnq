@@ -16,7 +16,9 @@
     <div class="questions-luxury-list">
       {% for question in questions.results %}
         <div class="questions-luxury-card">
-          <div class="questions-luxury-card-header d-flex justify-content-between align-items-center" style="cursor: pointer;">
+          <div class="questions-luxury-card-header d-flex justify-content-between align-items-center"
+            role="button" tabindex="0" aria-expanded="true"
+            aria-controls="product-question-body-{{ loop.index0 }}" style="cursor: pointer;">
             <span class="customer-name">
               {% if not question.is_anonymous and question.name is defined and question.name is not none %}
                 {{ question.name }}
@@ -31,7 +33,7 @@
               </svg>
             </span>
           </div>
-          <div class="questions-luxury-card-body">
+          <div class="questions-luxury-card-body" id="product-question-body-{{ loop.index0 }}">
             <h4 class="question-text">{{ question.question }}</h4>
             {% if question.answers is defined and question.answers is not none and question.answers | length > 0 %}
               <p class="answer-text">{{ question.answers[0].answer }}</p>
@@ -52,17 +54,55 @@
   
   <script>
     (function() {
-      // Toggle accordion open/closed state on click
+      var reduceMotion = window.matchMedia
+        && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
       document.querySelectorAll('.questions-luxury-card-header').forEach(function(header) {
-        // Clean up any existing listeners just in case
-        header.removeEventListener('click', handleHeaderClick);
+        if (header.__questionAccordionBound) {
+          return;
+        }
+
+        header.__questionAccordionBound = true;
         header.addEventListener('click', handleHeaderClick);
+        header.addEventListener('keydown', function(event) {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            handleHeaderClick({ currentTarget: header });
+          }
+        });
       });
-      
+
       function handleHeaderClick(e) {
         var card = e.currentTarget.closest('.questions-luxury-card');
-        if (card) {
-          card.classList.toggle('collapsed');
+        var body = card && card.querySelector('.questions-luxury-card-body');
+        if (!card || !body) {
+          return;
+        }
+
+        var shouldOpen = card.classList.contains('collapsed');
+        e.currentTarget.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+
+        if (reduceMotion) {
+          card.classList.toggle('collapsed', !shouldOpen);
+          body.style.maxHeight = shouldOpen ? 'none' : '0px';
+          return;
+        }
+
+        body.style.maxHeight = body.scrollHeight + 'px';
+        void body.offsetHeight;
+
+        if (shouldOpen) {
+          card.classList.remove('collapsed');
+          body.style.maxHeight = body.scrollHeight + 'px';
+          body.addEventListener('transitionend', function resetOpenHeight(event) {
+            if (event.propertyName === 'max-height' && !card.classList.contains('collapsed')) {
+              body.style.maxHeight = 'none';
+              body.removeEventListener('transitionend', resetOpenHeight);
+            }
+          });
+        } else {
+          card.classList.add('collapsed');
+          body.style.maxHeight = '0px';
         }
       }
     })();

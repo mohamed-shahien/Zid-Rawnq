@@ -4,9 +4,6 @@
 {% block header %} {% include 'header.jinja' %} {% endblock %}
 
 {% block top_links %}
-<link rel="stylesheet" type="text/css" href="{{ 'toastr.min.css' | asset_url }}" />
-<link rel="stylesheet" type="text/css" href="{{ 'ekko-lightbox.css' | asset_url }}" />
-
 <link rel="stylesheet" type="text/css" href="{{ ('product-details.css?v=' ~ ver)  | asset_url }}" />
 
 {% endblock %}
@@ -46,7 +43,7 @@
             <div>
                 <div class="row">
 
-                    <div class="col-lg-6">
+                    <div class="col-lg-6 pdp-gallery-column">
 
                         <!--GALLERY-->
                         <div id="wrap">
@@ -70,6 +67,9 @@
                                                                         style="display:block; width: 100%; height: 100%;">
                                                                         <img src="{{ image.image.full_size }}"
                                                                             class="carousel-img"
+                                                                            loading="{% if loop.first %}eager{% else %}lazy{% endif %}"
+                                                                            decoding="async"
+                                                                            fetchpriority="{% if loop.first %}high{% else %}low{% endif %}"
                                                                             alt="{{ image.alt_text }}">
                                                                         {% if image.provider and image.link %}
                                                                         <img id="main-video-icon" class="play-icon"
@@ -85,7 +85,7 @@
                                                                             onClick="hideIframe(this)">
                                                                             X
                                                                         </a>
-                                                                        <iframe width="100%" height="100%" src=""
+                                                                        <iframe width="100%" height="100%" src="" loading="lazy"
                                                                             frameborder="0"
                                                                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                                                             allowfullscreen style="max-width: 100%">
@@ -116,7 +116,8 @@
                                                             data-index="{{ loop.index0 }}"
                                                             style="width: 100%; height: 100%;">
                                                             <img src="{{ image.image.medium }}"
-                                                                data-index="{{ loop.index0 }}">
+                                                                data-index="{{ loop.index0 }}" loading="lazy"
+                                                                decoding="async" alt="{{ image.alt_text }}">
                                                             {% if image.provider and image.link %}
                                                             <img id="video-play-icon" class="play-icon"
                                                                 src="{{ 'video-play.svg' | asset_url }}" alt="play"
@@ -136,7 +137,7 @@
                                         <div class="content">
                                             <div class="d-flex" style="width: 100%; height: 100%;">
                                                 <img src="{{ 'product-img.svg' | asset_url }}" width="100%"
-                                                    height="auto" />
+                                                    height="auto" loading="lazy" decoding="async" alt="{{ product.name | safe }}" />
                                             </div>
                                         </div>
                                     </div>
@@ -151,12 +152,11 @@
                         style="display: flex; flex-direction: column; gap: 16px;">
 
                         {# 1. Product name and price #}
-                        <div class="d-flex justify-content-between align-items-start" style="gap: 16px;">
+                        <div class="pdp-title-price-row d-flex justify-content-between align-items-start" style="gap: 16px;">
                             <div>
-                                <h1 class="mb-2" style="font-size: 28px; font-weight: 600; line-height: 1.2;">{{ product.name | safe }}
-                                </h1>
+                                <h1 style="font-size: 28px; font-weight: 600; line-height: 1.2;">{{ product.name | safe }}</h1>
                             </div>
-                            <div class="d-flex align-items-center" style="gap: 8px; flex-shrink: 0;">
+                            <div class="pdp-price-row d-flex align-items-center" style="gap: 8px; flex-shrink: 0;">
                                 <h2 class="product-formatted-price theme-text-primary m-0" style="font-size: 28px; font-weight: 600; line-height: 1;">{%
                                     if product.selected_product.formatted_sale_price %}{{
                                     product.selected_product.formatted_sale_price }}{% else %}{{
@@ -179,26 +179,14 @@
 
 
                         {# 4. Payment widgets #}
-                        <div class="payment-widgets-minimal">{% include 'vitrin:products/payment_widgets.jinja' %}</div>
-                        <script>
-                            (function() {
-                                var el = document.querySelector('.payment-widgets-minimal');
-                                if (el && !el.innerText.trim() && !el.querySelector('img') && !el.querySelector('iframe')) {
-                                    el.style.display = 'none';
-                                }
-                            })();
-                        </script>
+                        <div class="payment-widgets-minimal pdp-async is-loading"
+                            data-pdp-async-slot data-pdp-empty-timeout="1800"
+                            style="--pdp-skeleton-height: 64px;">{% include 'vitrin:products/payment_widgets.jinja' %}</div>
 
                         {# 5. Loyalty points #}
-                        <div class="loyalty-widget-minimal" data-loyalty-widget>{% include 'vitrin:products/loyalty_points_widget.jinja' %}</div>
-                        <script>
-                            (function() {
-                                var el = document.querySelector('.loyalty-widget-minimal');
-                                if (el && !el.innerText.trim() && !el.querySelector('img') && !el.querySelector('svg')) {
-                                    el.style.display = 'none';
-                                }
-                            })();
-                        </script>
+                        <div class="loyalty-widget-minimal pdp-async is-loading"
+                            data-loyalty-widget data-pdp-async-slot data-pdp-empty-timeout="1800"
+                            style="--pdp-skeleton-height: 90px;">{% include 'vitrin:products/loyalty_points_widget.jinja' %}</div>
 
                         {# 3. Reviews, Weight, SKU and Stock Quantity Summary #}
                         <div class="product-metadata-summary-container" style="display: flex; flex-direction: column; gap: 10px;">
@@ -292,7 +280,7 @@
                                             <div class="related-product-card d-flex" style="background: #ffffff; padding: 12px; border: 1px solid #eaeaea; gap: 12px; height: 100%;">
                                                 <div class="related-product-img-wrapper" style="width: 80px; height: 90px; flex-shrink: 0; overflow: hidden; background: #fafafa;">
                                                     <a href="{{ rProduct.url }}">
-                                                        <img src="{{ rProduct.selected_product.media[0].image.medium if rProduct.selected_product.media else ('product-img.svg'|asset_url) }}" class="w-100 h-100" style="object-fit: cover;" alt="{{ rProduct.name }}">
+                                                        <img src="{{ rProduct.selected_product.media[0].image.medium if rProduct.selected_product.media else ('product-img.svg'|asset_url) }}" class="w-100 h-100" style="object-fit: cover;" width="80" height="90" loading="lazy" decoding="async" alt="{{ rProduct.name }}">
                                                     </a>
                                                 </div>
                                                 <div class="d-flex flex-column justify-content-between flex-grow-1">
@@ -356,13 +344,22 @@
                                 </div>
 
                                 {% include 'vitrin:checkout/checkout_dialog.jinja' %}
-                                <div id="product-view-add-to-cart"></div>
+                                <div id="product-view-add-to-cart"
+                                    class="pdp-async is-loading"
+                                    data-pdp-async-slot data-pdp-empty-timeout="2200"
+                                    style="--pdp-skeleton-height: 48px;"></div>
                             </div>
 
                             <!-- Instagram Reels Section -->
                             {% set reels_list = safeget(settings, "product_page_reels", []) %}
                             {% if reels_list and reels_list|length > 0 %}
-                                {% set current_cat_id = (product.categories|first).id if product.categories else "" %}
+                                {% set product_cat_ids = [] %}
+                                {% if product.categories %}
+                                    {% for c in product.categories %}
+                                        {% set _ = product_cat_ids.append(c.id|string) %}
+                                    {% endfor %}
+                                {% endif %}
+
                                 {% set matching_reels = [] %}
                                 {% for reel in reels_list %}
                                     {% set match_found = false %}
@@ -371,7 +368,7 @@
                                     {% set cat2 = reel.reel_category_2.id|default(reel.reel_category_2)|string %}
                                     {% set cat3 = reel.reel_category_3.id|default(reel.reel_category_3)|string %}
                                     
-                                    {% if current_cat_id|string == cat1 or current_cat_id|string == cat2 or current_cat_id|string == cat3 %}
+                                    {% if (cat1 and cat1 in product_cat_ids) or (cat2 and cat2 in product_cat_ids) or (cat3 and cat3 in product_cat_ids) %}
                                         {% set match_found = true %}
                                     {% endif %}
                                     
@@ -395,7 +392,7 @@
                                     <div class="reels-scroller d-flex" style="gap: 16px; overflow-x: auto; padding-bottom: 8px;">
                                         {% for reel in matching_reels %}
                                             <div class="reel-circle-item" data-videos="{{ reel.reel_videos }}" style="--reel-color: {{ reel.reel_color|default('#ccc') }};">
-                                                <img src="{{ reel.reel_cover }}" alt="Reel">
+                                                <img src="{{ reel.reel_cover }}" loading="lazy" decoding="async" alt="Reel">
                                             </div>
                                         {% endfor %}
                                     </div>
@@ -480,24 +477,24 @@
 
         {% if video_media %}
         <!-- Lifestyle Video -->
-        <section class="lifestyle-video-section mt-5 mb-5">
+        <section class="lifestyle-video-section pdp-deferred-section mt-5 mb-5">
             <div class="luxury-lifestyle-wrapper" style="border-radius: var(--border-radius-md); overflow: hidden; position: relative; padding-bottom: 56.25%; height: 0;">
-                <iframe src="{{ video_media.link }}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <iframe src="{{ video_media.link }}" loading="lazy" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>
         </section>
         {% elif product.selected_product.media and product.selected_product.media|length > 1 %}
         {% set lifestyle_media = product.selected_product.media|last %}
         {% if lifestyle_media.image and lifestyle_media.image.full_size %}
         <!-- Lifestyle Image -->
-        <section class="lifestyle-image-section mt-5 mb-5">
+        <section class="lifestyle-image-section pdp-deferred-section mt-5 mb-5">
             <div class="luxury-lifestyle-wrapper" style="border-radius: var(--border-radius-md); overflow: hidden;">
-                <img src="{{ lifestyle_media.image.full_size }}" class="w-100" alt="{{ product.name | safe }}" />
+                <img src="{{ lifestyle_media.image.full_size }}" class="w-100" loading="lazy" decoding="async" alt="{{ product.name | safe }}" />
             </div>
         </section>
         {% endif %}
         {% elif dev %}
         <!-- Dev Fallback Lifestyle Image -->
-        <section class="lifestyle-image-section mt-5 mb-5">
+        <section class="lifestyle-image-section pdp-deferred-section mt-5 mb-5">
             <div class="luxury-lifestyle-wrapper"
                 style="border-radius: var(--border-radius-md); overflow: hidden; background: #f5f5f5; display: flex; justify-content: center; align-items: center; min-height: 400px;">
                 <span class="text-muted" style="font-size: 24px;">Lifestyle Image Placeholder</span>
@@ -506,7 +503,7 @@
         {% endif %}
 
         {% if dev or store.settings.products.reviews_enabled or store.settings.products.questions_enabled %}
-        <div class="reviews-questions-section mt-5 pt-4" style="border-top: 1px solid var(--divider-color);">
+        <div class="reviews-questions-section pdp-deferred-section mt-5 pt-4" style="border-top: 1px solid var(--divider-color);">
             <div class="d-flex justify-content-center align-items-center mb-4 tabs-minimal-header">
                 {% if dev or store.settings.products.reviews_enabled %}
                 <h3 class="tab-btn active mx-3" style="cursor: pointer;" data-target="#tab-reviews">{{ _("Reviews") }}
@@ -602,9 +599,7 @@
 
 {% block footer_scripts %}
 
-<script type="text/javascript" src="{{ 'ekko-lightbox.min.js' | asset_url }}" defer></script>
-<script type="text/javascript" src="{{ 'product-details.js' | asset_url }}" defer></script>
-<script type="text/javascript" src="{{ 'toastr.min.js' | asset_url }}" defer></script>
+<script type="text/javascript" src="{{ ('product-details.js?v=' ~ ver) | asset_url }}" defer></script>
 <script>
     var productImages = {{ product.selected_product.media | tojson }};
     var baseProductImages = Array.isArray(productImages) ? productImages.slice() : [];
@@ -844,6 +839,8 @@
             var existingImage = trigger.querySelector('img');
             if (existingImage) {
                 existingImage.classList.add('variant-option-image');
+                existingImage.loading = 'lazy';
+                existingImage.decoding = 'async';
                 optionItem.classList.add('variant-image-option');
                 return;
             }
@@ -853,6 +850,7 @@
             image.src = imageData.optionUrl;
             image.alt = String(rawValue || '').trim();
             image.loading = 'lazy';
+            image.decoding = 'async';
 
             optionItem.classList.add('variant-image-option');
             optionItem.setAttribute('aria-label', image.alt);
@@ -948,6 +946,59 @@
         });
     }
 
+    var pdpReducedMotion = window.matchMedia
+        && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Thin compatibility layer: shared, cacheable UI behavior lives in product-details.js.
+    function getProductPageUI() {
+        return window.productPageUI || null;
+    }
+
+    function replayPdpAnimation(element) {
+        var ui = getProductPageUI();
+        if (ui) {
+            ui.motion(element);
+        }
+    }
+
+    function animatePdpValue(element) {
+        var ui = getProductPageUI();
+        if (ui) {
+            ui.motion(element, { y: 5, duration: 320 });
+        }
+    }
+
+    function setPdpVisibility(target, shouldShow, displayClass) {
+        var ui = getProductPageUI();
+        if (ui) {
+            ui.setVisibility(target, shouldShow, displayClass);
+            return;
+        }
+
+        $(target).toggleClass('d-none', !shouldShow);
+    }
+
+    function preparePdpImages(root) {
+        var ui = getProductPageUI();
+        if (ui) {
+            ui.prepareMedia(root);
+        }
+    }
+
+    function animatePdpTabSwitch(page, target, trigger) {
+        var ui = getProductPageUI();
+        if (ui) {
+            ui.switchTab(page, target, trigger);
+        }
+    }
+
+    function initPdpMotionSystem() {
+        var ui = getProductPageUI();
+        if (ui) {
+            ui.init(document.querySelector('.luxury-product-page'));
+        }
+    }
+
     // Custom UI Enhancements for Variants & Slider
     document.addEventListener("DOMContentLoaded", function () {
         // Inject variant images in the gallery without changing Zid option bindings.
@@ -978,7 +1029,7 @@
                                     <div class="box-1-1">
                                         <div class="content">
                                             <a class="image-link" style="display:block; width: 100%; height: 100%;">
-                                                <img src="${imgUrl}" class="carousel-img" alt="Variant Image">
+                                                <img src="${imgUrl}" class="carousel-img" loading="lazy" decoding="async" fetchpriority="low" alt="Variant Image">
                                             </a>
                                         </div>
                                     </div>
@@ -992,7 +1043,7 @@
                                         <div class="box-1-1">
                                             <div class="content">
                                                 <a class="d-flex align-items-center justify-content-center thumb-image-a" data-index="${mediaIndex}" style="width: 100%; height: 100%;">
-                                                    <img src="${thumbUrl}" data-index="${mediaIndex}" style="object-fit: contain; width: 100%; height: 100%;">
+                                                    <img src="${thumbUrl}" data-index="${mediaIndex}" loading="lazy" decoding="async" style="object-fit: contain; width: 100%; height: 100%;">
                                                 </a>
                                             </div>
                                         </div>
@@ -1002,9 +1053,9 @@
                 }
             });
             productImages = completeGalleryMedia;
-            $('.product-images-carousel').removeClass('d-none');
-            $('.product-images-empty').addClass('d-none');
-            $('.product-images-carousel-thumbs').toggleClass('d-none-important', completeGalleryMedia.length <= 1);
+            setPdpVisibility('.product-images-carousel', true);
+            setPdpVisibility('.product-images-empty', false);
+            setPdpVisibility('.product-images-carousel-thumbs', completeGalleryMedia.length > 1);
         }
     }
         } catch (e) {
@@ -1014,6 +1065,7 @@
     applyVariantOptionImages();
     cleanProductMetafieldLabels();
     initProductDescriptionCollapses();
+    initPdpMotionSystem();
 
     // Sync custom quantity stepper with real native input.
     const qtyNative = document.getElementById('product-quantity');
@@ -1056,7 +1108,7 @@
 
     $(window).on('load', function () {
         if (window.checkout_dialog) {
-            $('.btn-buy-now').removeClass('d-none');
+            setPdpVisibility('.btn-buy-now', true);
         }
     });
 
@@ -1154,7 +1206,9 @@
             if (response && response.item && response.cart_items_quantity) {
 
                 if (response.cart_items_quantity) {
-                    $('.cart-badge').removeClass('d-none').text(response.cart_items_quantity);
+                    $('.cart-badge').text(response.cart_items_quantity);
+                    setPdpVisibility('.cart-badge', true);
+                    animatePdpValue(document.querySelector('.cart-badge'));
                 }
 
                 if (typeof fetchCart === 'function') {
@@ -1294,17 +1348,18 @@
                 }
 
                 if (selected_product.weight && selected_product.weight.value) {
-                    $('.div-product-weight').removeClass('d-none');
-                    $('.div-product-weight .product-weight-value').html(selected_product.weight.value + ' ' + selected_product.weight.unit);
+                    setPdpVisibility('.div-product-weight', true);
+                    $('.div-product-weight .product-weight, .div-product-weight .product-weight-value')
+                        .html(selected_product.weight.value + ' ' + selected_product.weight.unit);
                 } else {
-                    $('.div-product-weight').addClass('d-none');
+                    setPdpVisibility('.div-product-weight', false);
                 }
 
                 if (selected_product.sku) {
-                    $('.div-product-sku').removeClass('d-none');
-                    $('.div-product-sku .product-sku-value').html(selected_product.sku);
+                    setPdpVisibility('.div-product-sku', true);
+                    $('.div-product-sku .product-sku, .div-product-sku .product-sku-value').html(selected_product.sku);
                 } else {
-                    $('.div-product-sku').addClass('d-none');
+                    setPdpVisibility('.div-product-sku', false);
                 }
 
                 {% if store.settings.products.low_stock_label_enabled %}
@@ -1312,10 +1367,10 @@
             var low_stock_message = '{{ _("Remaining %s only") }}';
 
             if (!selected_product.is_infinite && selected_product.quantity < store_low_stock_limit) {
-                $('.low-quantity-section').removeClass('d-none').addClass('d-inline-block');
+                setPdpVisibility('.low-quantity-section', true, 'd-inline-block');
                 $('.low-quantity-section .low-quantity').html(low_stock_message.replace('%s', selected_product.quantity));
             } else {
-                $('.low-quantity-section').removeClass('d-inline-block').addClass('d-none');
+                setPdpVisibility('.low-quantity-section', false);
             }
             {% endif %}
 
@@ -1326,7 +1381,7 @@
             }
 
             if (selected_product.quantity > 0 || canPreorder) {
-                $('.select-quantity-div').removeClass('d-none');
+                setPdpVisibility('.select-quantity-div', true);
                 var quantityMax;
                 if (canPreorder && selected_product.quantity <= 0) {
                     quantityMax = 100;
@@ -1340,7 +1395,7 @@
                     selectQuantity += '<option value="' + i + '">' + i + '</option>';
                 }
             } else {
-                $('.select-quantity-div').addClass('d-none');
+                setPdpVisibility('.select-quantity-div', false);
             }
 
             $('.select-quantity').html(selectQuantity);
@@ -1348,8 +1403,8 @@
                 syncLuxuryQtyDisplay();
             }
 
-            $('.product-buttons').removeClass('d-none');
-            $('.section-out-of-stock-notify-me').addClass('d-none');
+            setPdpVisibility('.product-buttons', true, 'd-block');
+            setPdpVisibility('.section-out-of-stock-notify-me', false);
 
             $('.btn-add-to-cart span').html(hasPreorder ? '{{ _("Preorder now") }}' : '{{ _("add to cart") }}');
 
@@ -1365,42 +1420,43 @@
                 $('.product-formatted-price-old').html('');
                 $('.product-formatted-price-discount').html('');
             }
-            $('.select-quantity-div').addClass('d-none');
+            setPdpVisibility('.select-quantity-div', false);
 
-            $('.product-buttons').addClass('d-none');
-            $('.section-out-of-stock-notify-me').removeClass('d-none');
+            setPdpVisibility('.product-buttons', false);
+            setPdpVisibility('.section-out-of-stock-notify-me', true, 'd-block');
             $('.btn-add-to-cart span').html('{{ _("Option not available") }}');
 
             if (selected_product.sku) {
-                $('.div-product-sku').removeClass('d-none');
-                $('.div-product-sku .product-sku-value').html(selected_product.sku);
+                setPdpVisibility('.div-product-sku', true);
+                $('.div-product-sku .product-sku, .div-product-sku .product-sku-value').html(selected_product.sku);
             } else {
-                $('.div-product-sku').addClass('d-none');
+                setPdpVisibility('.div-product-sku', false);
             }
 
             if (selected_product.weight && selected_product.weight.value) {
-                $('.div-product-weight').removeClass('d-none');
-                $('.div-product-weight .product-weight-value').html(selected_product.weight.value + ' ' + selected_product.weight.unit);
+                setPdpVisibility('.div-product-weight', true);
+                $('.div-product-weight .product-weight, .div-product-weight .product-weight-value')
+                    .html(selected_product.weight.value + ' ' + selected_product.weight.unit);
             } else {
-                $('.div-product-weight').addClass('d-none');
+                setPdpVisibility('.div-product-weight', false);
             }
             updateProductImages(selected_product);
         }
     } else {
         // Variant doesn't exist.
-        $('.select-quantity-div').addClass('d-none');
+        setPdpVisibility('.select-quantity-div', false);
         if (canPreorder) {
-            $('.product-buttons').removeClass('d-none');
-            $('.section-out-of-stock-notify-me').addClass('d-none');
+            setPdpVisibility('.product-buttons', true, 'd-block');
+            setPdpVisibility('.section-out-of-stock-notify-me', false);
             $('.btn-add-to-cart span').html('{{ _("Preorder now") }}');
         } else {
-            $('.product-buttons').addClass('d-none');
-            $('.section-out-of-stock-notify-me').removeClass('d-none');
+            setPdpVisibility('.product-buttons', false);
+            setPdpVisibility('.section-out-of-stock-notify-me', true, 'd-block');
             $('.btn-add-to-cart span').html('{{ _("Option not available") }}');
         }
 
-        $('.div-product-weight').addClass('d-none');
-        $('.div-product-sku').addClass('d-none');
+        setPdpVisibility('.div-product-weight', false);
+        setPdpVisibility('.div-product-sku', false);
 
         updateProductImages(selected_product);
     }
@@ -1427,9 +1483,9 @@
         }
 
         if (completeGalleryMedia.length > 0) {
-            $('.product-images-carousel').removeClass('d-none');
-            $('.product-images-carousel-thumbs').removeClass('d-none-important');
-            $('.product-images-empty').addClass('d-none');
+            setPdpVisibility('.product-images-carousel', true);
+            setPdpVisibility('.product-images-carousel-thumbs', true);
+            setPdpVisibility('.product-images-empty', false);
 
             var sliderElement = document.getElementById('product-images-swiper');
             if (sliderElement && window.themeSwiper) {
@@ -1461,7 +1517,7 @@
                     '<div class="box-1-1">' +
                     '<div class="content">' +
                     '<a class="image-link" style="display:block; width: 100%; height: 100%;">' +
-                    '<img src="' + prFullImage + '" class="carousel-img" alt="' + (selected_product && selected_product.name ? selected_product.name : '') + '">';
+                    '<img src="' + prFullImage + '" class="carousel-img" loading="' + (z === 0 ? 'eager' : 'lazy') + '" decoding="async" fetchpriority="' + (z === 0 ? 'high' : 'low') + '" alt="' + (selected_product && selected_product.name ? selected_product.name : '') + '">';
 
                 if (prImage.provider && prImage.link) {
                     imageHtml += '<img id="main-video-icon" class="play-icon" src="{{ "video-play.svg" | asset_url }}" alt="play" onclick="showIframe(this, \'' + prImage.link.replace(/'/g, '\\\'') + '\')"/>';
@@ -1470,7 +1526,7 @@
                 imageHtml += '</a>' +
                     '<div class="iframe-video pt-1 d-none">' +
                     '<a id="iframe-close-btn" type="button" class="text-white btn btn-none grow" onClick="hideIframe(this)">X</a>' +
-                    '<iframe width="100%" height="100%" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="max-width: 100%">' +
+                    '<iframe width="100%" height="100%" src="" loading="lazy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="max-width: 100%">' +
                     '</iframe>' +
                     '</div>' +
                     '</div>' +
@@ -1485,7 +1541,7 @@
                     '<div class="box-1-1">' +
                     '<div class="content">' +
                     '<a class="d-flex align-items-center justify-content-center thumb-image-a" data-index="' + z + '" style="width: 100%; height: 100%;">' +
-                    '<img src="' + prThumbImage + '" data-index="' + z + '">';
+                    '<img src="' + prThumbImage + '" data-index="' + z + '" loading="lazy" decoding="async">';
 
                 if (prImage.provider && prImage.link) {
                     thumbHtml += '<img id="video-play-icon" class="play-icon" src="{{ "video-play.svg" | asset_url }}" alt="play" data-index="' + z + '">';
@@ -1508,9 +1564,9 @@
                 initProductGallery(productImages, Math.max(0, selectedImageIndex));
             });
         } else {
-            $('.product-images-carousel').addClass('d-none');
-            $('.product-images-carousel-thumbs').addClass('d-none-important');
-            $('.product-images-empty').removeClass('d-none');
+            setPdpVisibility('.product-images-carousel', false);
+            setPdpVisibility('.product-images-carousel-thumbs', false);
+            setPdpVisibility('.product-images-empty', true);
         }
     }
 
@@ -1534,8 +1590,8 @@
 
     function addReviewButtonChecks() {
         if (!window.customerAuthState || !window.customerAuthState.isAuthenticated) {
-            $('#add-review-btn').css('display', 'none');
-            $('#add-review-link').removeClass('d-none');
+            setPdpVisibility('#add-review-btn', false);
+            setPdpVisibility('#add-review-link', true);
             $('#add-review-link').attr('href', '/auth/login?redirect_to=' + window.location.pathname.replace('/', ''));
             $('#add-review-link').on('click', function (e) {
                 e.preventDefault();
@@ -1639,13 +1695,17 @@
 
         var sliderElement = document.getElementById('product-images-swiper');
         if (!sliderElement || !window.themeSwiper) {
-            $('.product-images-carousel').removeClass('product-images-carousel-init');
+            var fallbackGallery = document.querySelector('.product-images-carousel');
+            if (fallbackGallery) {
+                fallbackGallery.classList.remove('product-images-carousel-init');
+                replayPdpAnimation(fallbackGallery);
+            }
             return null;
         }
 
         var hasMultipleImages = productImages.length > 1;
         document.querySelectorAll('.product-gallery-control, .product-gallery-pagination').forEach(function (control) {
-            control.classList.toggle('d-none', !hasMultipleImages);
+            setPdpVisibility(control, hasMultipleImages);
         });
         initProductGalleryThumbs();
 
@@ -1659,7 +1719,12 @@
             pagination: hasMultipleImages,
             on: {
                 init: function (swiper) {
-                    $('.product-images-carousel').removeClass('product-images-carousel-init');
+                    var gallery = document.querySelector('.product-images-carousel');
+                    if (gallery) {
+                        gallery.classList.remove('product-images-carousel-init');
+                        replayPdpAnimation(gallery);
+                        preparePdpImages(gallery);
+                    }
                     syncProductGalleryThumbnail(swiper.activeIndex);
                     setTimeout(function () {
                         playProductSlideVideo(swiper.slides[swiper.activeIndex]);
@@ -1957,8 +2022,21 @@
                 return;
             }
 
-            $target.slideToggle(250, function () {
-                $icon.text($target.is(':visible') ? '-' : '+');
+            var willOpen = !$target.is(':visible');
+            if ($icon.length && !pdpReducedMotion && typeof $icon.get(0).animate === 'function') {
+                $icon.get(0).animate([
+                    { opacity: 1, transform: 'rotate(0deg) scale(1)' },
+                    { opacity: 0.35, transform: 'rotate(90deg) scale(0.7)' },
+                    { opacity: 1, transform: 'rotate(180deg) scale(1)' }
+                ], {
+                    duration: 360,
+                    easing: 'cubic-bezier(0.22, 1, 0.36, 1)'
+                });
+            }
+
+            $target.stop(true, true).slideToggle(380, function () {
+                $icon.text(willOpen ? '-' : '+');
+                $icon.toggleClass('is-open', willOpen);
             });
         });
 
@@ -1971,10 +2049,7 @@
                 return;
             }
 
-            $page.find('.tabs-minimal-header .tab-btn').removeClass('active').addClass('text-muted');
-            $(this).addClass('active').removeClass('text-muted');
-            $page.find('.tabs-minimal-content .tab-pane').hide().removeClass('active');
-            $target.fadeIn(250).addClass('active');
+            animatePdpTabSwitch($page.get(0), $target.get(0), this);
         });
 
         // 3. Hex Color Swatches: visual enhancement only; original variant DOM/bindings stay untouched.
@@ -2292,56 +2367,13 @@
             }
         }
 
-        function hideEmptyWidgets() {
-            var paymentWidget = document.querySelector('.payment-widgets-minimal');
-            if (paymentWidget) {
-                var hasContent = paymentWidget.innerText.trim().length > 0 || 
-                                 paymentWidget.querySelector('img') !== null || 
-                                 paymentWidget.querySelector('iframe') !== null || 
-                                 (paymentWidget.children.length > 0 && paymentWidget.offsetHeight > 5);
-                if (!hasContent) {
-                    paymentWidget.style.display = 'none';
-                }
-            }
-            
-            var loyaltyWidget = document.querySelector('.loyalty-widget-minimal');
-            if (loyaltyWidget) {
-                var hasLoyalty = loyaltyWidget.innerText.trim().length > 0 || 
-                                 loyaltyWidget.querySelector('img') !== null || 
-                                 loyaltyWidget.querySelector('svg') !== null ||
-                                 (loyaltyWidget.children.length > 0 && loyaltyWidget.offsetHeight > 5);
-                if (!hasLoyalty) {
-                    loyaltyWidget.style.display = 'none';
-                }
-            }
-        }
-
         document.addEventListener('DOMContentLoaded', function () {
             initRelatedProductsSwiper();
-            hideEmptyWidgets();
             initReels();
-
-            document.querySelectorAll('[data-loyalty-widget]').forEach(function (widget) {
-                var box = widget.querySelector('.loyalty-points-products-section');
-
-                if (!box || !box.textContent.trim()) {
-                    widget.classList.add('is-loading');
-
-                    setTimeout(function () {
-                        widget.classList.remove('is-loading');
-
-                        if (!widget.querySelector('.loyalty-points-products-section')) {
-                            widget.classList.add('is-empty');
-                            hideEmptyWidgets();
-                        }
-                    }, 700);
-                }
-            });
         });
 
         window.addEventListener('load', function() {
             initRelatedProductsSwiper();
-            hideEmptyWidgets();
         });
     })();
 </script>
