@@ -85,30 +85,23 @@
 .theme-swiper-pagination .swiper-pagination-bullet {
     position: relative;
     display: inline-block;
-    width: 20px;
-    height: 20px;
+    width: 8px;
+    height: 8px;
     margin: 0 5px !important;
     cursor: pointer;
+    border-radius: 4px;
+    background: #d1d1D6;
     opacity: 1;
-    background: transparent;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease, transform 0.3s ease;
 }
 
 .theme-swiper-pagination .swiper-pagination-bullet::before {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 20px;
-    height: 20px;
-    content: '\2022';
-    text-align: center;
-    color: #000;
-    font-size: 14px;
-    line-height: 20px;
-    opacity: 0.25;
+    display: none !important;
 }
 
-.theme-swiper-pagination .swiper-pagination-bullet-active::before {
-    opacity: 0.75;
+.theme-swiper-pagination .swiper-pagination-bullet-active {
+    width: 20px;
+    background: var(--primary-color, #000);
 }
 
 .main-slider .theme-swiper-pagination {

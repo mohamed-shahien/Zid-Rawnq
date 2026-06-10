@@ -1,59 +1,105 @@
 {
   "icon": "fa fa-square",
   "name": {
-    "ar": "اسفل الصفحة",
-    "en": "footer"
+    "ar": "أسفل الصفحة",
+    "en": "Footer"
   },
   "groups": [
+    {
+      "id": "store_identity",
+      "icon": "font_awesome",
+      "name": {
+        "ar": "بيانات المتجر في الفوتر",
+        "en": "Footer store details"
+      },
+      "settings": [
+        {
+          "id": "logo",
+          "type": "image",
+          "label": {
+            "ar": "شعار مخصص للفوتر",
+            "en": "Custom footer logo"
+          },
+          "info": {
+            "ar": "اتركه فارغًا لاستخدام شعار المتجر الرئيسي",
+            "en": "Leave empty to use the main store logo"
+          }
+        },
+        {
+          "id": "name",
+          "type": "text",
+          "label": {
+            "ar": "اسم مخصص للمتجر",
+            "en": "Custom store name"
+          },
+          "info": {
+            "ar": "اتركه فارغًا لاستخدام اسم المتجر الرئيسي",
+            "en": "Leave empty to use the main store name"
+          }
+        },
+        {
+          "id": "description",
+          "type": "textarea",
+          "label": {
+            "ar": "وصف مخصص للمتجر",
+            "en": "Custom store description"
+          },
+          "info": {
+            "ar": "اتركه فارغًا لاستخدام وصف المتجر الرئيسي",
+            "en": "Leave empty to use the main store description"
+          }
+        }
+      ]
+    },
     {
       "id": "links_1",
       "icon": "font_awesome",
       "name": {
-        "ar": "روابط مهمة",
-        "en": "Links"
+        "ar": "صفحات المتجر",
+        "en": "Store pages"
       },
       "settings": [
+        {
+          "id": "title",
+          "type": "text",
+          "label": {
+            "ar": "عنوان القائمة",
+            "en": "List title"
+          }
+        },
         {
           "id": "hide",
           "type": "checkbox",
           "label": {
-            "ar": "إخفاء",
-            "en": "Hide"
+            "ar": "إخفاء القائمة",
+            "en": "Hide list"
           }
         },
         {
           "id": "links",
           "type": "list",
           "label": {
-            "ar": "الروابط",
-            "en": "Links"
+            "ar": "صفحات المتجر",
+            "en": "Store pages"
           },
           "settings": [
-            {
-              "id": "url",
-              "type": "url",
-              "label": {
-                "ar": "الرابط",
-                "en": "Link"
-              }
-            },
             {
               "id": "title",
               "type": "text",
               "label": {
-                "ar": "العنوان",
-                "en": "text"
+                "ar": "اسم الصفحة",
+                "en": "Page name"
+              }
+            },
+            {
+              "id": "url",
+              "type": "url",
+              "label": {
+                "ar": "رابط الصفحة",
+                "en": "Page link"
               }
             }
           ]
-        },
-        {
-          "id": "title",
-          "type": "text",
-          "label": {
-            "ar": "العنوان",
-            "en": "Title"
-          }
         }
       ]
     },
@@ -61,51 +107,51 @@
       "id": "links_2",
       "icon": "font_awesome",
       "name": {
-        "ar": "روابط مهمة",
-        "en": "Links"
+        "ar": "صفحات التصنيفات",
+        "en": "Category pages"
       },
       "settings": [
+        {
+          "id": "title",
+          "type": "text",
+          "label": {
+            "ar": "عنوان القائمة",
+            "en": "List title"
+          }
+        },
         {
           "id": "hide",
           "type": "checkbox",
           "label": {
-            "ar": "إخفاء",
-            "en": "Hide"
+            "ar": "إخفاء القائمة",
+            "en": "Hide list"
           }
         },
         {
           "id": "links",
           "type": "list",
           "label": {
-            "ar": "الروابط",
-            "en": "Links"
+            "ar": "صفحات التصنيفات",
+            "en": "Category pages"
           },
           "settings": [
-            {
-              "id": "url",
-              "type": "url",
-              "label": {
-                "ar": "الرابط",
-                "en": "Link"
-              }
-            },
             {
               "id": "title",
               "type": "text",
               "label": {
-                "ar": "العنوان",
-                "en": "text"
+                "ar": "اسم التصنيف",
+                "en": "Category name"
+              }
+            },
+            {
+              "id": "url",
+              "type": "url",
+              "label": {
+                "ar": "رابط التصنيف",
+                "en": "Category link"
               }
             }
           ]
-        },
-        {
-          "id": "title",
-          "type": "text",
-          "label": {
-            "ar": "العنوان",
-            "en": "Title"
-          }
         }
       ]
     },
@@ -113,24 +159,24 @@
       "id": "about_us",
       "icon": "font_awesome",
       "name": {
-        "ar": "عن المتجر",
-        "en": "About us"
+        "ar": "نبذة عن المتجر",
+        "en": "About the store"
       },
       "settings": [
-        {
-          "id": "des",
-          "type": "textarea",
-          "label": {
-            "ar": "النص",
-            "en": "Description"
-          }
-        },
         {
           "id": "title",
           "type": "text",
           "label": {
             "ar": "العنوان",
             "en": "Title"
+          }
+        },
+        {
+          "id": "des",
+          "type": "textarea",
+          "label": {
+            "ar": "النص",
+            "en": "Description"
           }
         }
       ]
@@ -139,26 +185,8 @@
       "id": "social_media",
       "icon": "font_awesome",
       "name": {
-        "ar": "وسائل التواصل",
-        "en": "Business location"
-      },
-      "settings": [
-        {
-          "id": "title",
-          "type": "text",
-          "label": {
-            "ar": "العنوان",
-            "en": "Title"
-          }
-        }
-      ]
-    },
-    {
-      "id": "business_location",
-      "icon": "font_awesome",
-      "name": {
-        "ar": "الموقع الجغرافي",
-        "en": "Business location"
+        "ar": "التواصل الاجتماعي",
+        "en": "Social media"
       },
       "settings": [
         {

@@ -6,7 +6,12 @@
     "colors_header_menu_text_color": "#000000",
     "colors_footer_background_color": "#ffffff",
     "colors_header_background_color": "#ffffff",
-    "colors_header_menu_background_color": "#ffffff"
+    "colors_header_menu_background_color": "#ffffff",
+    "product_page_reels_title_link": "",
+    "product_page_reels": []
   },
-  "en": {}
+  "en": {
+    "product_page_reels_title_link": "",
+    "product_page_reels": []
+  }
 }

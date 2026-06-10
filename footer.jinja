@@ -1,8 +1,9 @@
-<footer id="{{ sectionId }}" section-id="{{ sectionId }}" class='d-flex flex-column'>
+{% set dev = true %}
 
-    {% set about_settings=settings %}{% include 'components/footer-store-section.jinja' %}
-
+<footer
+    id="{{ sectionId }}"
+    section-id="{{ sectionId }}"
+    class="store-footer footer-theme-bg-primary footer-theme-text-for-primary-bg"
+>
+    {% include 'components/footer-store-section.jinja' %}
 </footer>
-
-
-

@@ -322,6 +322,90 @@
                 "ar": "ارفع صورة بحجم 150 * 150 ",
                 "en": "This is an info text sample here"
               }
+            },
+            {
+              "id": "color",
+              "type": "color",
+              "label": {
+                "ar": "لون الخلفية",
+                "en": "Background Color"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "product_page",
+      "icon": "fa fa-cogs",
+      "name": {
+        "ar": "إعدادات صفحة المنتج",
+        "en": "Product Page Settings"
+      },
+      "settings": [
+        {
+          "id": "reels_title_link",
+          "type": "url",
+          "label": {
+            "ar": "رابط عنوان الريلز",
+            "en": "Reels Title Link"
+          }
+        },
+        {
+          "id": "reels",
+          "type": "list",
+          "label": {
+            "ar": "الريلزات",
+            "en": "Reels"
+          },
+          "settings": [
+            {
+              "id": "reel_category_1",
+              "type": "category",
+              "label": {
+                "ar": "التصنيف الأول",
+                "en": "First Category"
+              }
+            },
+            {
+              "id": "reel_category_2",
+              "type": "category",
+              "label": {
+                "ar": "التصنيف الثاني (اختياري)",
+                "en": "Second Category (Optional)"
+              }
+            },
+            {
+              "id": "reel_category_3",
+              "type": "category",
+              "label": {
+                "ar": "التصنيف الثالث (اختياري)",
+                "en": "Third Category (Optional)"
+              }
+            },
+            {
+              "id": "reel_cover",
+              "type": "image",
+              "label": {
+                "ar": "غلاف الريلز",
+                "en": "Reel Cover"
+              }
+            },
+            {
+              "id": "reel_color",
+              "type": "color",
+              "label": {
+                "ar": "لون حلقة الريلز",
+                "en": "Reel Ring Color"
+              }
+            },
+            {
+              "id": "reel_videos",
+              "type": "textarea",
+              "label": {
+                "ar": "روابط الفيديوهات (مفصولة بـ &&)",
+                "en": "Video URLs (separated by &&)"
+              }
             }
           ]
         }

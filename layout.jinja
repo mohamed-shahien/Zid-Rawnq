@@ -1,4 +1,4 @@
-{% set ver = '0.1.042' %}
+{% set ver = '0.1.045' %}
 <!doctype html>
 <html class="no-js" lang="{{ session.lang }}" dir="{{ session.locale.language.direction }}">
 <head>
@@ -110,6 +110,8 @@
       <link rel="stylesheet" href="{{ 'icomoon.css?v=1.0.2' | asset_url }}">
     </noscript>
 
+    <link rel="stylesheet" type="text/css" href="{{ 'normalize.css' | asset_url }}" />
+
     {% if session.lang == 'ar' %}
         <link rel="stylesheet" type="text/css" href="{{ 'bootstrap-rtl.css?v=1.05' | asset_url }}" />
     {% else %}
@@ -193,7 +195,7 @@
         {% block header %}{% endblock %}
     </div>
     <div class="main flex-grow-1 app-content"
-            {% if settings.colors_background_image %} style="background-repeat: repeat; background-image: url('{{ settings.colors_background_image }}');" {% endif %}>
+            style="{% if settings.colors_background_image %}background-repeat: repeat; background-image: url('{{ settings.colors_background_image }}');{% endif %} {% if settings.colors_background_color %}background-color: {{ settings.colors_background_color }};{% endif %}">
         {% block main_content %}{% endblock %}
     </div>
     <div class="footer">

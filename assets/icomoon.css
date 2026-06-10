@@ -150,16 +150,13 @@
 }
 .icon-border-star:before {
   content: "\e932";
-  color: #edb900;
-}
+  color: rgb(0, 0, 0);}
 .icon-half-star:before {
   content: "\e931";
-  color: #edb900;
-}
+  color: rgb(0, 0, 0);}
 .icon-star1:before {
   content: "\e930";
-  color: #edb900;
-}
+  color: rgb(0, 0, 0);}
 .icon-account_circle_black_24dp:before {
   content: "\e92f";
 }

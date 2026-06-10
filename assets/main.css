@@ -596,43 +596,6 @@ button.more-button , a.more-button {
 }
 
 
-/*
-    footer
-*/
-
-.store-section {
-    background-color: #DEDEDE;
-    color:  var(--text-color-primary-bg);
-}
-
-.footer-horizontal-line {
-    border-top: 0.5px solid var(--footer-text-color-primary-bg, var(--text-color-primary-bg));
-    margin-top: 100px;
-}
-
-.store-section h1 {
-    font-weight: var(--font-wieght-sizeTwo);
-    font-size: 1rem;
-}
-
-.store-section p {
-    font-size: 0.9rem;
-}
-
-.store-section a {
-    text-decoration: none;
-    color: var(--footer-text-color-primary-bg, var(--text-color-primary-bg));
-    cursor: pointer;
-}
-
-.footer-section-2 {
-    padding-top: 50px;
-}
-
-.footer-pages div p:last-child {
-    margin-bottom: 0px;
-}
-
 .subscribe-bar {
     background: var( --primary-color);
     width: 100%;
@@ -662,100 +625,9 @@ button.more-button , a.more-button {
     width: 70px;
 }
 
-.footer-icons {
-
-}
-
-.footer-store-section {
-    padding-top: 35px;
-    padding-bottom: 35px;
-}
-
-.footer-store-section-bars {
-    min-height: 80px;
-    border-bottom: 0.5px solid #cccccc;
-}
-
-.footer .logistics-pay-icons {
-    margin-right: -8px;
-    margin-left: -8px;
-}
-
-.footer .icons a, .footer .logistics-pay-icons a {
-    padding: 5px 8px;
-}
-
-.footer .icons div {
-    padding: 10px 15px;
-}
-
-.vat-crn-sections span {
-    font-size: 0.929rem;
-}
-
-.vat-crn-sections {
-    margin-left: -5px;
-    margin-right: -5px;
-}
-
-.vat-crn-sections > div {
-    padding-left: 5px;
-    padding-right: 5px;
-}
-
-.footer-bar {
-
-}
-
-.footer-bar span {
-    padding: 5px;
-}
-
-.footer-title{
-    font-weight: var(--font-wieght-sizeTwo);
-    font-size: 1.1666666666666667rem;
-    color:#6B6B6B;
-}
-.footer-text{
-    list-style-type: none;
-    padding-right: 0px;
-}
-.footer-text a{
-    font-weight:var(--font-weight-sizeOne);
-    font-size:14px;
-    color:#6B6B6B;
-}
-.footer-sub-text{
-    font-weight: var(--font-weight-sizeOne);
-    font-size:14px;
-    padding: 10px;
-    color:#6B6B6B;
-    padding-right: 0px;
-
-
-}
 @media only screen and (max-width: 768px) {
-
-
-    .logistics-pay-icons a {
-        padding: 5px 8px !important;
-    }
-
-    .footer-pages div {
-        margin-top: 30px;
-    }
-
-    .footer-section-2 {
-        height: auto;
-        padding-top: 10px;
-    }
-
     .subscribe-title {
         margin-top: 40px;
-    }
-
-    .vat-crn-sections {
-        justify-content: center !important;
     }
 }
 
@@ -1052,35 +924,6 @@ button.more-button , a.more-button {
 
 .availability-bar .ab-close {
     color: rgb(151, 86, 76);
-}
-
-
-.store-section .social-icons span {
-    height: 35px;
-    width: 35px;
-    color: var(--footer-text-color-primary-bg, var(--text-color-primary-bg));
-    font-size: 22px;
-    border: 2px solid var(--footer-text-color-primary-bg, var(--text-color-primary-bg));
-    padding: 5px;
-    border-radius: 50%;
-}
-
-.x-icon-twitter {
-    height: 35px;
-    width: 35px;
-    fill: var(--footer-text-color-primary-bg, var(--text-color-primary-bg));
-    font-size: 22px;
-    border: 2px solid var(--footer-text-color-primary-bg, var(--text-color-primary-bg));
-    padding: 5px;
-    border-radius: 50%;
-}
-
-.store-section .social-icons{
-    margin-left: -5px;
-    margin-right: -5px;
-}
-.store-section .social-icons a {
-    margin: 0px 2.5px 5px 2.5px;
 }
 
 
@@ -1597,6 +1440,9 @@ h2 {
     color: var(--primary-color);
     font-size: 1.833rem;
 }
+p {
+    margin-bottom: 0;
+}
 hr {
     margin-top: 1rem;
     margin-bottom: 1rem;
@@ -1869,11 +1715,6 @@ hr {
 }
 
 
-.footer-theme-bg-primary-dark-1 {
-    background-color: var(--footer-primary-color, var(--primary-color));
-    filter: brightness(80%);
-}
-
 .theme-bg-primary-dark-2 {
     background-color: var(--header-primary-color, var(--primary-color));
     filter: brightness(120%);
@@ -1941,10 +1782,6 @@ hr {
     background-color: var(--footer-primary-color, var(--primary-color));
 }
 
-.footer-theme-text-primary {
-    color: var(--footer-primary-color, var(--primary-color));
-}
-
 .footer-theme-text-for-primary-bg {
     color: var(--footer-text-color-primary-bg, var(--text-color-primary-bg));
 }
@@ -1956,16 +1793,6 @@ hr {
     left: 0;
     top: 0;
     z-index: -1;
-}
-
-.footer-copyrights span{
-    padding: 5px  0px;
-    font-size: 0.929rem;
-    color: inherit;
-}
-
-.footer-copyrights a {
-    color: inherit;
 }
 
 .blog-text img {
@@ -2118,4 +1945,17 @@ hr {
 .sub-menu-head,
 .breadcrumb-item {
     text-transform: capitalize;
+}
+
+@media (min-width: 992px) {
+    .col-footer {
+        -ms-flex-preferred-size: 0;
+        flex-basis: 0;
+        -ms-flex-positive: 1;
+        flex-grow: 1.5;
+        max-width: 100%;
+    }
+}
+.footer-certificate-item img{
+    width: 30px;
 }

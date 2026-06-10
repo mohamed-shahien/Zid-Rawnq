@@ -589,3 +589,9 @@ msgstr "تدوينات ذات صلة"
 
 msgid "Share on X"
 msgstr "المشاركة على X"
+
+msgid "There are no previous questions"
+msgstr "لا توجد أسئلة سابقة"
+
+msgid "You can add your question to know more about the product"
+msgstr "يمكنك إضافة سؤالك لمعرفة المزيد عن المنتج"

@@ -32,7 +32,7 @@
                 <div class="rating-section">
                    <div>
                        {% set rating=product.rating.average %}{% include 'components/rating-stars.jinja' %}
-                      <span class="product-card-rating-count">({{ product.rating.total_count }})</span>
+                      <span class="product-card-rating-count">({{ product.rating.total_count }} {% if session.lang == 'ar' %}تقييم{% else %}ratings{% endif %})</span>
                    </div>
                 </div>
              {% endif %}

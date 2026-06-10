@@ -1,18 +1,28 @@
 {
   "ar": {
-    "about_us_des": "لوريم ابسيوم لوريم ابسيوم لوريم ابسيوم لوريم ابسيوم لوريم ابسيوم لوريم ابسيوم لوريم ابسيوم لوريم ابسيوم لوريم ابسيوم لوريم ابسيوم لوريم ابسيوم ",
+    "store_identity_logo": "",
+    "store_identity_description": "",
+    "links_1_title": "صفحات المتجر",
     "links_1_hide": false,
+    "links_1_links": [],
+    "links_2_title": "التصنيفات",
     "links_2_hide": false,
-    "links_2_links": [
-      null,
-      {
-        "url": "/faqs",
-        "title": "ابسيوم"
-      }
-    ],
-    "links_2_title": "ابسيوم",
-    "about_us_title": "من نحن",
-    "social_media_title": "mm"
+    "links_2_links": [],
+    "about_us_title": "نبذة عن المتجر",
+    "about_us_des": "",
+    "social_media_title": "تواصل معنا"
   },
-  "en": {}
+  "en": {
+    "store_identity_logo": "",
+    "store_identity_description": "",
+    "links_1_title": "Store pages",
+    "links_1_hide": false,
+    "links_1_links": [],
+    "links_2_title": "Categories",
+    "links_2_hide": false,
+    "links_2_links": [],
+    "about_us_title": "About the store",
+    "about_us_des": "",
+    "social_media_title": "Contact us"
+  }
 }
